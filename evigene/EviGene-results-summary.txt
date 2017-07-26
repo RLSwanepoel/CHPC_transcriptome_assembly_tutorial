@@ -1,0 +1,214 @@
+
+Evidential Gene sets, 2011
+
+
+Summary comparison of 3 arthropod gene and transcript evidence
+              Daphia magna,  Daphnia pulex, Pea aphid
+
+daphnia_magna, 2011mar      daphnia_pulex, 2010     pea_aphid, 2011 june
+Evid.   Nevd     Dmagb8    Evid.   Nevd   Dplx2     Evid.   Nevd   Aphid2
+------  ------   ------    ------  ------ ------    ------  ------ ------
+EST     26mb     0.86      EST     12mb    0.88     EST     36mb   0.79   
+Pro     27mb     0.79      Pro     21mb    0.83     Pro     27mb   0.76   
+RNA     32mb     0.70      RNA     42mb    0.68     RNA     55mb   0.49  
+Intron   89k     0.95      Intron   68k    0.96     Intron  127k   0.70
+                           TAR     36Mb    0.79          
+                              
+Coding span      30 mb     Coding span    48 mb     Coding span   42 mb
+Exon span        58 mb     Exon span      71 mb     Exon span     73 mb
+Genome size     131 mb*    Genome size   227 mb     Genome size   541 mb
+Gene count       31694     Gene count     47712     Gene count    36586 
+ >95% evidence   66%                      --                       37%
+ >66% evidence   81%                      --                       66%
+--------------------------------------------------------------------------
+Nevd for EST, Pro, RNA is total span of non-overlapping reads or alignments,
+but count for good, unique Intron sites from spliced reads.
+* This Daphnia magna genome assembly is incomplete.
+
+# add here n/pct genes with complete (95%) evidence support
+
+pea aphid (11june):  evd95= 37%, 13710/36584 ; evd66= 66%, 24161/36584
+    from 0.5 Billion RNAseq, 200 K EST
+    
+daphnia magna (11mar):  evd95= 66%, 22753/34614 ; evd66= 81%, 28126/34614
+    from 1.2 Billion RNAseq, 1000 K EST
+
+#.............................................................
+
+## make bar plots of these stats?
+
+## trim this to few essential comparisons: last-vers ("OGS1"), ab-initio?, 1-predict, bestof
+## aphid: add acypi? gene set as base
+
+Gene Evidence Summary  for pea_aphid2, 2011mar
+Evid.   Nevd    Statistic       gnomn   ncbiref    epir2   	epir9	  mix3  
+--------------------------------------------------------------------------
+
+EST     36mb    BaseOverlap     0.516   0.471      0.781+   0.708+  0.813 
+Pro     27mb    BaseOverlap     0.536   0.386      0.747    0.772+  0.786 
+RNA     129mb   BaseOverlap     0.244   0.189      0.375    0.409+  0.369 
+Ref     1.5mb   BaseOverlap     0.851   0.809      0.937    0.896   0.960 
+
+Intron  228342  SpliceHit       0.497    ---       0.589    0.601+  0.587   
+# using only 'good' introns w/ count>5, size < 2k:
+Intron  127076  SpliceHit       0.612   0.517      0.689    0.697+  0.687   
+
+T'poson 42mb    BaseOverlap     0.024   0.005      0.075    0.080   0.068 
+Specif  58mb    BaseOverlap     0.564   0.636      0.406    0.421   0.430 
+
+>> trim this to one or lines?  90% perfect? 
+ESTgene 10371   Perfect         1911    1862       1563     1394    2143  
+ESTgene 10371   Mostly          5456    5121       6940     6739    7601  
+ESTgene 10371   Sensitv.        0.588   0.553      0.742    0.679   0.775 
+ESTgene 10371   Specifc.        0.602   0.621      0.382    0.440   0.402 
+
+Progene 12860   Perfect         3487    3334       4492     3644    4548  
+Progene 12860   Mostly          8296    6896       10243    10346   10574 
+Progene 12860   Sensitv.        0.414   0.350      0.501    0.499   0.512 
+Progene 12860   Specifc.        0.665   0.685      0.558    0.504   0.578 
+
+>> combine estgene/progene sens/spec to one gene-level measure ?
+
+>> * add homology, replace Progene?
+
+GCover  --      Coding bases    30.6    15.7      53       51.4    42    
+GCover  --      Exon bases      35.8    19.7      97.7     88.4    74.1  
+GCover  --      Gene count      37782   10625     37467    50905   32967 
+>> too many partial, small genes in epir9, from rnas
+--------------------------------------------------------------------------
+
+
+** redo daphnia_magna evidence
+Gene Evidence Summary  for daphnia_magna, 2011mar
+Evid.   Nevd    Statistic       best6    epir6		ab24   
+--------------------------------------------------------
+
+EST     103mb   BaseOverlap     0.901    0.786   0.601  // bad evd
+Pro     27mb    BaseOverlap     0.794    0.696   0.726  
+RNA     46mb    BaseOverlap     0.493    0.445+  0.302  
+						
+T'poson 843Kb   BaseOverlap     0.599    0.603   0.443  
+Specif  60mb    BaseOverlap     0.406    0.412   0.520  
+
+ESTgene 34165   Perfect         18990    2914    1252   
+ESTgene 34165   Mostly          30808    19721   13675  
+ESTgene 34165   Sensitv.        0.900    0.667   0.551   
+ESTgene 34165   Specifc.        0.482    0.337   0.314  
+
+Progene 19252   Perfect         9061     6229    4377   
+Progene 19252   Mostly          15051    12788   12604  
+Progene 19252   Sensitv.        0.749    0.653   0.701  
+Progene 19252   Specifc.        0.756    0.692   0.468  
+
+# add homology genescores
+
+GCover  --      Coding bases    31.9     25.8    26     
+GCover  --      Exon bases      59.6     50.8    30.2   
+GCover  --      Gene count      40848    27476   13921  
+                   too many here ^^^ , most small partials from pasagenes
+---------------------------------------------------------
+
+
+Gene Evidence Summary  for nasonia_vit_genes2, 2011mar
+Evid.   Nevd    Statistic       ogs12   gnomon1 nvit2x6
+-----------------------------------------------------
+
+EST     35mb    BaseOverlap     0.441   0.446   0.860
+Pro     24mb    BaseOverlap     0.693   0.717   0.795
+RNA     50mb    BaseOverlap     0.316   0.325   0.532
+Ref     17mb    BaseOverlap     1.000   1.000   0.958
+TAR     75mb    BaseOverlap     0.296   0.304   0.782
+
+T'poson 28mb    BaseOverlap     0.121   0.154   0.318
+Specif  60mb    BaseOverlap     0.672   0.612   0.444
+        ^^ 30mb isnt all_evd_exon Mb=60mb, but is 1st pred exon mb
+        
+ESTgene 10194   Perfect         912     976     1582
+ESTgene 10194   Mostly          7020    7005    9308
+ESTgene 10194   Sensitv.        0.602   0.616   0.852
+ESTgene 10194   Specifc.        0.552   0.559   0.376
+
+Progene 26284   Perfect         5138    5084    5567
+Progene 26284   Mostly          16095   16467   18520
+Progene 26284   Sensitv.        0.690   0.714   0.782
+Progene 26284   Specifc.        0.338   0.330   0.256
+
+GCover  --      Coding bases    27.8    31.5    36.3
+GCover  --      Exon bases      29.4    33.1    85.3
+GCover  --      Gene count      18941   28886   30326
+-----------------------------------------------------
+
+#........ 2011 June pea aphid .................
+
+Evidential Gene models for pea aphid
+http://arthropods.eugenes.org/EvidentialGene/pea_aphid2/genes/
+
+A table of gene annotations is in file aphid2_evigene8f.annot.txt.gz 
+where you can find function names, quality scores, and cross reference IDs.
+View genes on a genome map at
+http://arthropods.eugenes.org:8091/gbrowse/cgi-bin/gbrowse/aphid2/
+
+36,500 genes are located in aphid2_evigene8f gene set:
+  14,000 are fully supported by evidence (expression/orthology),
+  24,000 have above 66% evidence support,
+  33,000 have above 33% evidence support, 
+  the remainder have evidence but at lower levels.
+
+  23,200 have paralogs to pea aphid genes, above 33% identity
+  13,500 have orthologs to other species, above 33% identity
+    11,800 of these are true orthologs, the rest have stronger paralogy
+  
+  5000 alternate transcripts among 2700 genes add to these primary transcripts.
+  4400 are non-coding or poorly coding genes.
+  4000 have partial proteins (missed start,stop,inner stop)
+  3300 are likely transposon genes; 2800 have expression, strong to moderate, but
+       only 400 have valid introns (versus 2/3 of non-TE genes with valid introns).
+
+  90 genes are valid chimeric models from version 1, split across scaffolds now.
+ 270 have long genes with valid long introns, span > 100 Kb (acyp2eg0001707t1 nears 1 Mb;
+     honeybee has 240 long genes, fruitfly has 50).
+
+Protein size is 262 aa (median), 21 Kb largest, for 42 Mb coding bases in 
+the genome. Transcript size is 1.6 Kb (median), 62 Kb largest, for 73 Mb 
+transcript bases in genome, with average 58% coding/transcript ratio.
+
+16,800 Evigene models are equivalent to NCBI RefSeq (13,000)/Gnomon (3800)
+    for 90+% of coding sequence.  10,000 are equivalent to ACYPI v1 genes,
+    many ACYPI1 models are partial components of this gene set.
+
+
+    Gene Evidence Summary for pea_aphid2, 2011 June
+  Evid.   Nevd    Statistic       acypi1  evigene  ncbi2
+  ------  ------  -------------   -----   ------   -----
+  EST     36Mb    BaseOverlap     0.49    0.79     0.69
+  Protein 27Mb    BaseOverlap     0.47    0.76     0.46
+  RNA     55Mb    BaseOverlap     0.27    0.49     0.43    
+  Intron  127000  SplicesHit      0.52    0.70     0.68
+  
+  Ortholog        N_found         21782   31868   14989    
+  Ortholog        SameLocus_N     10127   11114   10157
+  Ortholog        SameLocus_Nbest   537    1370     796
+  Ortholog        SameLocus_Bits    387     402     415
+  
+  Paralog         N_found         22272   30447    na
+  
+  Genome          Coding Mb       28Mb    42Mb     21Mb
+  Genome          Exon Mbase      33Mb    73Mb     36Mb
+  Genome          Gene count      35722   36586    16894
+  ------------------------------------------------------
+  Predictors are
+  evigene=genes/aphid2_evigene8e.gff,   2011-June
+  ncbi2=genes/acyr2_ncbigenes.gff,      2011-May          
+  acypi1=genes/acyr1-ACYPImRNA.gff,      2009
+  
+  EST, Protein, RNA are spans of evidence (Nevd) and proportion
+  recovered in 3 prediction sets.  Introns are valid splice
+  locations from EST/RNA reads.
+  
+  Ortholog SameLocus is protein homology of 3 prediction sets 
+  to Uniprot-arthropods from loci with all 3 predictors:
+  SameLocus_N is count of models with Uniprot hit (e<1e-5), 
+  SameLocus_Bits is average bitscore,
+  SameLocus_Nbest is count where predictor has best homology.
+  --------------------------------------------------------------
+

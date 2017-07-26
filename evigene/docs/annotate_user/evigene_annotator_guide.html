@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>EvidentialGene Annotator Guide</title>
+	
+	<style id="iml1" class="imlc">
+  .crop {  width: 800px; height: 200px; overflow: hidden; border: 1px blue solid; }
+  .crop4 { width: 250px; height: 200px; overflow: hidden; border: 1px blue solid; }
+  .crop4 img { width: 500px; }
+	</style>
+
+</head>
+<body>
+	<h1>EvidentialGene Annotator Guide</h1>
+  <h4>Example for Killifish gene set, 2012-Aug</h4>
+
+  Killifish gene set, kfish1_best9f 2012-Aug, is generally a good 1st draft set, to go with
+  the first draft genome assembly.   Ortholog gene content is high, in top tier of related
+  fish genomes, and gene quality is overall good, full length proteins, with much EST and
+  homology support. <p>
+  
+  Improving and annotating this gene set involves distinguishing bad from good, where a
+  majority are good, if not yet perfect models, of the available gene 
+  evidence.  Expect some learning time to distinguish mistakes in modeling gene evidence, 
+  by looking at genome map displays, and examples of bad versus good. <p>
+  
+  
+	<h2>Plans for improved Killifish genes</h2>
+<ul>
+	<li>  - another round of computational gene construction and refinement with new evidence, thru 2013 spring,
+  <ul><li>a. Genome assembly improvements (joining partial scaffolds, filling some gaps?) will
+      <li>b. RNA-seq addition for fuller transcript assemblies and exon joining evidence.
+      <li>c. Population genome variation and conservation, as additional gene evidence (coding conservation).
+      </ul>
+      
+   <li> - incorporate annotator corrections, improvements and notes.
+   <ul><li>d. Orthology and functional validation of genes is very helpful to reduce computational
+      errors.
+      <li>e. Expert assessment of genome-wide errors and biases will aid refining next gene set. 
+      Computational methods make mistakes on many genes at a time, so spotting one class of mistake
+      in a few genes leads to improvements of many. <br>
+      <li>f. Lists of gene families or classes that have many errors can be used to improve others
+      of the class, eg. very long proteins are often fragmented, short but true genes may be missed,
+      and some classes like weakly expressed or repetitive-protein genes may be subject to more errors .
+      </ul>
+</ul>
+      
+	<h2>Common gene model errors</h2>
+<ul>
+	<li>  - fragments or splits : parts of 1 gene, often complete protein, commonest problem in 1st draft
+	        gene sets<p>
+        
+	<li>  - fusions or joins : 2 genes, or more, as one.  Rarer but depends much on evidence,
+	    commonest where genes are packed closely.  May have aberrant long UTR that is 2nd gene;<p>
+   
+	<li>  - gaps in genome hide exons, etc.  Denovo RNA/EST assemblies can cover gap, otherwise
+	    no good solution.<p>
+  
+	<li>  - end of scaffold genes; can be corrected from split in RNA/EST reads/denovo asm, or 
+	        split of strong ortholog protein mapping.<p>
+        
+	<li>   - missing exons or mistaken exon/intron joins; rare with current gene modeling software,
+	    exons are usually accurate; for areas lacking EST or prot evidence they are guess but
+	    CDS-exons are relatively easy to find correctly.<p>
+    
+	<li>   - disagreement of evidence, esp. mapped ortholog proteins vs mapped EST exons.  Judgement
+	   depends on strength of evidence.  Where native EST/RNA evidence is strong / complete, this
+	   outweighs alien proteins.<p>
+</ul>
+  
+  
+   
+	<h2>Identifying problems</h2>
+<ul>
+	<li>    - Inspect genome map for all evidence: mapped proteins, introns from EST/RNA, EST/RNA
+	      assemblies, EST/RNA reads.  Does gene model match either majority or one of stronger
+	      evidence lines?<p>
+
+<a href="kfishprivateurl/killifish1/">
+Killifish GBrowse map Tracks</a>, below map. View these evidence, prediction tracks to help decide.
+<pre>
+Genome features
+x Introns         : best to see if exons are joined by EST reads
+x EST asm.PASA    : genome EST assembly
+x EST asm.Newbler : denovo EST assembly
+x DNA/GC Content  : Gaps show as zero content
+Optional: EST-reads Transposons Repeats  
+
+Protein_Analysis
+x Tilapia   :  best species gene set
+x Stickleback  x Medaka 
+x Tetraodon : weakest fish set
+x Zebrafish x Human : good reference   option: Xenopus  
+
+Prediction
+x Killifish genes 2012b9 : Current best gene set
+x A User Choice   : Your corrections show here, but dont show until Update map or move (Display: Cache tracks prevents)
+Other prediction models, to replace current model
+p AUGepi3 p AUGepir1  p AUGepi9 p AUGepir8  p AUGabi0 p AUGepic5  p AUGpie2  p xmbest7pu  
+</pre>
+
+
+	<li>    - Delve into gene families : <br>
+	<ul>
+	<li>      a. missed ortholog genes found in many others.  Some have evidence of mapped proteins
+	      but poor gene model.<br>
+	    <a href="http://arthropods.eugenes.org/EvidentialGene/killifish/">
+	    EvidentialGene/killifish/project/orthomcl/</a><br>
+	    killifish_miss456.readme.txt <br>
+	    killifish_miss456.otherfish.loci : location table for 900 mapped fish proteins of missed orthologs<br>
+	    These loci can be inspected on Killifish genome map for missing ortholog genes.
+      <p>
+
+	<li>      b. too many paralogs, relative to other species.  Some are split genes, some are true
+	      new paralogs.  Distinguish: split genes have different parts of ortholog, paralogs have
+	      same part or complete ortho-protein. See below example. <br>
+	      <p>
+      
+	<li>      c. protein too big or too small relative to other species: some are fusions or fragments.<br>
+	    <a href="http://arthropods.eugenes.org/EvidentialGene/killifish/">
+	    EvidentialGene/killifish/project/orthomcl/</a><br>
+	    killifish_outlier.tootiny.tab (~500)<br>
+      killifish_outlier.toobig.tab  (~100)<br>
+	<p>
+	</ul>
+
+   <li>- Long and short proteins have more errors: <br>
+      - Long (10,000+aa .. 1000aa) tend to be split in pieces, esp. if expression is weak,
+        or with long coding exons (1000s of nt).<br>
+      - short proteins, under ~60aa, often 1-exon, may be discarded as fragments.  Check for missing
+        orthologs that are short, model may exist.<p>
+
+</ul>
+      
+      
+	<h2>Resolving problems</h2>
+	
+<ul>
+	<li>    - examine all evidence at locus on genome map(as above).  Does gene model match either
+	    majority or one of stronger evidence lines?   Gene predictions should not be considered
+	    evidence, but looking at will help.<p>
+      
+	<li>    - possible splits:  <br>
+	      Does split point have evidence from ESTs, esp introns, that span split region?
+	        - likely error 2 fragments of 1 gene<br>
+	      Does split point have deficit of evidence, esp EST, but two models have strong evidence?
+	        - likely correct split of 2 genes<p>
+   
+	<li>    - possible joins: Does homology score (blast bits) match shorter
+	    ortho genes?  Join model will not exceed score of best part. Does
+	    Does EST/intron evidence fail to span likely join? Are introns or
+	    models reversed orientation (rather stupid compute mistake but
+	    happens).<p>
+
+	<li>    - gaps in genome: - does denovo EST assembly extend over gap (look
+	    for partially  mapped score)?<p>
+
+	<li>    - end of scaffold genes: - does longer ortholog protein map there
+	    and to other scaffold (end or middle)? - does denovo EST assembly
+	    map there + other scaffold?<p>
+
+	<li>    - disagreement of evidence: weigh strength of evidence for
+	    alternate models. Majority is wrong at times. Expression evidence,
+	    when strong and near complete is likely accurate.  Disagreement
+	    may indicate alternate transcripts, esp. for exon joining pattern;
+	    mark likely alternates.<p>
+      
+	<li>   - Revise chosen best model by picking from available alternates. If
+	   no better model exists, add note of problem. Evigene annotation
+	   system doesn't offer manual revisions, that is joining or splitting
+	   into new models that are not pre-computed.  Other annotation
+	   systems such as Apollo do this but are time consuming to learn and
+	   apply.<p>
+	   
+</ul>
+
+	<h2>Annotate locus dialog</h2>
+
+<table><tr><td>
+	Each gene on GBrowse map has click-able information dialog. This includes
+<ul>
+	 <li>  a. Brief summary about gene, Name and quality.
+	 <li>  b. Detailed report in <u>View Gene Details ..</u> link.
+	 <li>  c. <u>Update Choices</u> .. dialog to promote or demote this model.
+	 <li>  d. Table of all updates made by others, with links to location, <u> View Changes table</u>
+</ul>
+	 Examine the Gene Details for further information, including Protein, cDNA sequences,
+	 and homology links. <p>
+	 
+	 View the Changes table to see what other problems have been corrected, as examples of what
+	 to look for.<p>
+	 
+	 Use this dialog to replace poor models with better, or enter note about any problem.
+	 Choose among the Tracks for Predictions p. AUGepir1 .. AUGepi9, xmbest7pu if they look best, these are
+	 more likely complete models.  Or choose EST asm.PASA, EST asm.Newbler assemblies if complete.
+	 Choose a good fish gene if need be to fit best model. <p>
+<pre>Update choices                       use  [X] at top to cancel
+  [x] No change . .  [ ] Alternate transcript . .  [ OK ] to change
+  [ ] Best model . . [ ] None are good at locus
+  [ ] Drop model . . [ ] Skip locus, no gene here
+  Note: [ENTER Your Comments Here] </pre>
+  
+</td><td>
+  <img src="kfannots/votegene2.png" width="571" height="345" alt="votegene2"><br>
+</td></tr></table>  
+
+<p>
+
+
+	<h2>Examples</h2>
+
+	<h3>Gene join (easy case: reversed)</h3>
+		
+	Here two reversed genes are joined, as
+		<a href="kfishprivateurl/killifish1/?name=scaffold_2:79700..99700">
+    Funhe5EG000103t1</a>.  
+	Both introns and mapped fish genes show these are reversed genes.
+	But EST denovo assembly joined these nearby and did not account for reversal, which is
+	found only with mapping introns to genome. 
+	Similar but harder to spot, un-reversed joined genes occur.
+	<br>
+
+<div class="crop">
+	<a href="kfannots/genejoin_sc2x.png"> <img src="kfannots/genejoin_sc2x.png" alt="" ></a> 
+</div>
+
+	<p>
+	<hr>
+
+  <h3>Join or Split? Ambiguous</h3>
+	
+	In this case of possible gene split, the evidence is inconsistent. <br>
+	<a href="kfishprivateurl/killifish1/?name=scaffold_2:410000..500000">
+	Funhe5EG000114t1 and Funhe5EG000115t1</a>  match stickleback, tetraodon and zfish genes,
+	and EST assemblies.  But human, medaka and tilapia models join these two.
+	Critical to me is that EST expression is strong-ish over two parts, but split middle lacks
+	joining expression.  Orthologs of joiners above may clarify. <br>
+	
+<div class="crop">
+	<a href="kfannots/joinorsplit_sc2Fh114-5.png"><img src="kfannots/joinorsplit_sc2Fh114-5.png" alt="450"></a> 
+</div>
+	<p>
+	<hr>
+
+
+	<h3>toosmall FISH10117 s1013</h3>
+	Example gene, <a href="kfishprivateurl/killifish1/?name=scaffold_1013:190700..225700">
+	BRCA2_HUMAN</a>, split at genome gap, has no accurate alternate model.
+	This was found examining "tootiny" orthologs, from
+  EvidentialGene/killifish/project/orthomcl/killifish_outlier.tootiny.tab 
+	<br>
+	
+<div class="crop">
+<a href="kfannots/toosmallFISH10117_s1013.png"><img src="kfannots/toosmallFISH10117_s1013.png" alt="400" ></a>
+</div>
+ <p>
+<hr>
+
+
+	<h3>toobig FISH10096 addalt_s567</h3>
+	This is a case <a href="kfishprivateurl/killifish1/?name=Funhe5EG013406">Funhe5EG013406</a> 
+	from killifish_outlier.toobig.tab of a bigger Killifish protein than orthologs.
+	Inspection of genome map says the current model is likely accurate, not a join, as introns and EST support the
+	joining of all exons.  However a shorter alternate transcript exists and matches other fish genes.
+	<br>
+	
+<div class="crop">
+<a href="kfannots/toobigFISH10096addalt_s567.png"><img src="kfannots/toobigFISH10096addalt_s567.png" alt="400" ></a>
+</div>
+ <p>
+<hr>
+
+
+
+	<h3>Too many paralogs</h3>
+	A killifish gene family with more paralogs than other fish may include fragment genes.  
+	Inspecting these gene familys will find some have fragments and some true paralogs.  
+	One way to find such groups is with the below search of gene groups.  You can also reverse this 
+	search, for groups with too few killifish paralogs, then hunt for the missing paralog with
+	blast or genome map search of other fish gene IDs.
+<pre>	      
+    <a href="http://arthropods.eugenes.org/EvidentialGene/killifish/">EvidentialGene/killifish/project/</a>
+    Search gene families, 
+    >Limit to genes in these taxa:  Fish: 1 or 0
+    >Limit to genes in these species: Killifish: 2+
+    Search for Vertebrata with above constraints : No. matches = 1225
+</pre>
+  Ignore: ntaxa below 4, and 274 groups remain. 
+  <a href="kfishprivatexurl/search?q=fish8xml-all:vertebrata+AND+Killifish:[2+TO+999]+AND+Medaka:[0+TO+1]+AND+Stickleback:[0+TO+1]+AND+Tetraodon:[0+TO+1]+AND+Tilapia:[0+TO+1]+AND+Zebrafish:[0+TO+1]+AND+ntaxa:[4+TO+999]">
+  Or use this search link</a> <p>
+  Look at gene group page of these others.
+  If killifish gene IDs are consecutive (or nearly), they are next to each other, and may be splits.<p>
+  
+  E.g. <a href="kfishprivatexurl/FISH8_G2208">FISH8_G2208 Toll-like receptor 2</a>, 
+  <a href="kfishprivateurl/killifish1/?name=scaffold_1237:221500..253400">
+  Funhe5EG021539t1, Funhe5EG021540t1</a> <br>
+  <b>These are NOT splits, but 2 true paralogs</b>, as each matches complete tilapia/medaka genes
+  that have two mappings.<p>
+  
+  E.g. <a href="kfishprivatexurl/FISH8_G2508">
+  FISH8_G2508 Vertebrate protein tyrosine phosphatase</a>, 
+  <a href="kfishprivateurl/killifish1/?name=scaffold_6:1132000-1197000">
+  Funhe5EG000402t1 .. 403t1 .. 404t1 </a> <br>
+  These are 3 parts of 1 gene.  Expression ESTs only exist for middle part, but all mapped proteins
+  cover all 3 parts, and orthology indicates these kfish genes are too short.<p>
+  
+<div class="crop">
+  <a href="kfannots/split3fish8g2508_sc6.png"><img src="kfannots/split3fish8g2508_sc6.png" alt="400"></a>
+</div>
+<p>
+<hr>
+
+
+	<h3>Plectin paralogs : big gene problems</h3>
+There are more Plectin, or <a href="kfishprivatexurl/FISH8_G231">
+FISH8_G231 Microtubule-actin crosslinking factor</a>,
+paralogs for Killifish than others.  This is a big gene, 7000 aa per paralog. 
+Most of the putative 4 common vertebrate paralogs are split for Killifish, at these 4 locations.
+The 2nd, plectin3_q_sc759, looks  complete but fragment alternate exons exist in middle.
+<p>
+
+<table>
+
+<tr valign=top><td>
+  locus P1: many fragments, corrected w/ other model<br>
+<div class="crop4">
+  <a href="kfannots/plectin1manyparts_sc160.png">
+  <img src="kfannots/plectin1manyparts_sc160.png" xwidth="250"></a>
+</div>
+</td><td>
+  locus P2: accurate full gene, with alternate exon fragments<br>
+<div class="crop4">
+   <a href="kfannots/plectin3_q_sc759.png">
+   <img src="kfannots/plectin3_q_sc759.png" xwidth="250"></a> 
+</div>
+</td><td>
+  locus P3: two big parts, no full model, alternate p-AUGepi9 covers most of gene<br>
+<div class="crop4">
+   <a href="kfannots/plectin_split_sc760.png">
+   <img src="kfannots/plectin_split_sc760.png" xwidth="250"></a>
+</div>
+</td><td>
+  locus P4: two big parts, could be 2 genes, evidence disagrees<br>
+<div class="crop4">
+  <a href="kfannots/plectin1or2fishmix_s1000.png">
+  <img src="kfannots/plectin1or2fishmix_s1000.png" xwidth="250"></a> <br>
+</div>
+</td></tr>
+</table>
+
+<p>
+<hr>
+
+
+<h2>Extra credit</h2>
+
+	There are other gene family searches that pull out interesting Killifish groups.
+	Of interest are those families with no other fish species, and without good functional
+	information.  While the largest of such tend to be uninteresting Transposon groups, 
+	there is one very intriguing group of 99 Killifish genes.  You can find this
+	with the below Orthomcl family search
+<pre>	      
+    <a href="http://arthropods.eugenes.org/EvidentialGene/killifish/">EvidentialGene/killifish/project/</a>
+    Search gene families, 
+    >Limit to genes in these taxa:  Fish: None
+    >Limit to genes in these species: Killifish: 2+
+    Search for Vertebrata with above constraints : No. matches = 829
+</pre>
+
+  That group <a href="kfishprivatexurl/FISH8_G28">FISH8_G28</a>
+  at top has 99 Kfish genes, and my inspection of ~10 shows EST expression, without transposon overlap.  
+  There is some weak homology for some of these.  Can
+  anyone win the prize of determining a family function for this large group, from those
+  weak homologies or other analyses?   A zinc finger motif is most common of the weak homologs.
+  Looking at the Funhe IDs, they occur in tandem clusters of 2-3 paralogs, but do not appear to
+  be fragments of longer genes.
+  <p>
+  Other groups of uniquely killifish genes from above may include Transposon genes yet to be assigned.
+  Check for expression, some other groups are killifish expressed, such as  FISH8_G321 with 31 paralogs.
+  <p>
+  
+</body>
+</html>

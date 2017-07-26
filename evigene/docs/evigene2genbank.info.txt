@@ -1,0 +1,87 @@
+
+Evigene gene set to annotated genbank submit genome
+
+Primary work is by evigene2genbanktbl.pl, which expects GFF v3 gene
+set as formated by evigene scripts, with annotations in place for
+evidence (protein homology, transcript assemblies, ..)
+
+evigene_gbsubmit.conf  configures how evigene.gff features are
+converted to genbank tbl features, and which evidence fields are converted.
+
+NCBI tbl2asn then converts evigene.tbl + genome fasta to submit data set,
+with discrepency validation logs.
+
+evigene2genbanktbl.pl writes a log output with some discrepancies, which
+may need to be corrected before running ncbi tbl2asn.
+
+========================================================
+
+
+Nasonia gene set genbank submit:
+------------------------------------------------------
+
+$evigene/scripts/evigene2genbanktbl.pl -debug  -conf genes/evigene_wasp2_gbsubmit.conf \
+ -changelist genes/pub11u/pub11u.evg2tbl.changelist \
+ -in genes/pub11u/pub11u.good.gff -out submit/pub11u.tbl > & submit/log.evg2tbl11utb &
+
+# split into pieces? no need
+$nbin/tbl2asn -p submit/ -a s -V vb -X E -Z submit/gbsub.discrep -n 'Nasonia vitripennis' -C Nasvi\
+  > & submit/log.tbl &
+
+cat submit/*.val | perl -ne'@v=split; print "$v[0] $v[2]\n";' | sort | uniq -c | sort -k1,1nr \
+  > submit/gbsub.valsum
+#......................................................
+
+
+Cacao gene set genbank submit:
+------------------------------------------------------
+genes/evigene_cacao3_gbsubmit.conf
+  configure genbank submit output, per feature type, options, evidence cutoffs
+
+genes/cacao3g_gbsubmit.droplist
+  change list for submit: "TheccID  action  param  comments"
+  where action= drop, strand +/-, gene geneID, rename newID, defer/deferto altID
+
+# generate .qvl, .fsa, .pep sequences from original 2011.august
+#   genome/Theobroma_cacao.main_genome.scaffolds.fasta,.qual
+# need to split by chromosomes to avoid memory overloads, other problems.
+------------------------------------------------------
+
+$evigene/scripts/evigene2genbanktbl.pl -change genes/cacao3g_gbsubmit.droplist -conf genes/evigene_cacao3_gbsubmit.conf \
+ -debug -in genes/pub3h/cacao11genes_pub3h.good.gff  -out submit/pub3h.tbl > & log.sub22 &
+
+./tblpaste.sh
+
+#full data set#
+bash -c 'for i in 1 2 3 4 5 6 7 8 9 10; do { mkdir submit$i; mv submit/pub3h.scaffold_$i.{tbl,pep,fsa,qvl} submit$i/; } done'
+mkdir submito; mv submit/pub3h.other.{tbl,pep,fsa,qvl} submito/ 
+
+for i in 1 2 3 4 5 6 7 8 9 10 o; do {
+ ./tbl2asn -p submit$i/ -t ./cacao11ncbi.sbt -a s -V vb -X E -Z submit$i/pub3h.discrep_s$i -n 'Theobroma cacao' -C CacaoGD > & log.tbl$i &
+} done
+
+# copy back tbl2asn result for asndisc
+bash -c 'for i in 1 2 3 4 5 6 7 8 9 10; do { mv submit$i/pub3h.scaffold_$i.{sqn,val} submit/; } done'
+mv submito/pub3h.other.{sqn,val} submit/ 
+
+cd submit/
+cat pub3h.*.val | perl -ne'@v=split; print "$v[0] $v[2]\n";' | sort | uniq -c | sort -k1,1nr > pub3h.all.valsum
+
+../asndisc -SF -Pg -p ./ -o pub3h.all.discrep \
+-L eukaryota \
+-d JOINED_FEATURES,FEATURE_LOCATION_CONFLICT,CONTAINED_CDS,FIND_OVERLAPPED_GENES,\
+DISC_PERCENT_N,N_RUNS,NO_ANNOTATION,DISC_QUALITY_SCORES,\
+MISSING_GENOMEASSEMBLY_COMMENTS,TEST_LOW_QUALITY_REGION,DISC_BACTERIAL_PARTIAL_NONEXTENDABLE_PROBLEMS \
+
+Error/Warnings
+  submit/pub3h.all.valsum
+  submit/pub3h.all.discrep
+
+discrep sum:
+  DISC_FEATURE_COUNT:gene: 28813 present
+  DISC_FEATURE_COUNT:mRNA: 43794 present
+  DISC_FEATURE_COUNT:misc_feature: 194 present
+  DISC_FEATURE_COUNT:mobile_element: 95473 present
+  DISC_COUNT_NUCLEOTIDES:711 nucleotide Bioseqs are present
+------------------------------------------------------
+

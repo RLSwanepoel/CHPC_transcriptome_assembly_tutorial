@@ -1,0 +1,63 @@
+Please cite this for EvidentialGene RNA assemblies and methods:
+
+  Gilbert, Donald (2013) Gene-omes built from mRNA seq not genome DNA. 
+  7th annual arthropod genomics symposium. Notre Dame.
+  http://arthropods.eugenes.org/EvidentialGene/about/EvigeneRNA2013poster.pdf
+  and http://globalhealth.nd.edu/7th-annual-arthropod-genomics-symposium/
+
+Please cite this for EvidentialGene genome-gene construction methods:
+
+  Gilbert, Donald (2012) Perfect Arthropod Genes constructed with Gigabases of RNA
+  6th annual Arthropod Genomics Symposium. Kansas State U.
+  http://arthropods.eugenes.org/EvidentialGene/about/PerfectGenes2012poster.pdf
+  -- with prelim poster/paper --
+  Gilbert, Donald (2010) Perfect(ing) Arthropod Genes with Next Gene Informatics
+  4th annual Arthropod Genomics Symposium. Kansas State U.
+  http://arthropods.eugenes.org/EvidentialGene/about/PerfectGenes2010.pdf 
+  .............................
+ 
+EvidentialGene is used by others in these reports
+
+  Nakasugi K, Crowhurst R, Bally J, Waterhouse P (2014) 
+  Combining Transcriptome Assemblies from Multiple De Novo Assemblers in
+  the Allo-Tetraploid Plant Nicotiana benthamiana.
+  PLoS ONE 9(3): e91776. doi:10.1371/journal.pone.0091776
+  * independent review/comparison of Evigene and other tr assembly methods *
+  
+  Chagne D, Crowhurst RN, Pindo M, Thrimawithana A, Deng C, et al. (2014) 
+  The Draft Genome Sequence of European Pear (Pyrus communis L. Bartlett). 
+  PLoS ONE 9(4): e92644. doi:10.1371/journal.pone.0092644
+  
+  Shu Chen, J. Scott McElroy, Fenny Dane, and Eric Peatman (2014)
+  Optimizing Transcriptome Assemblies for Eleusine indica Leaf and
+  Seedling by Combining Multiple Assemblies from Three De Novo
+  Assemblers.
+  doi: 10.3835/plantgenome2014.10.0064; Posted online 4 Dec. 2014
+  https://www.crops.org/files/publications/tpg/first-look/tpg-2014-10-0064.pdf
+  same https://dl.sciencesocieties.org/publications/tpg/pdfs/0/0/plantgenome2014.10.0064
+  "This study demonstrated the usefulness of the EvidentialGene pipeline tr2aacds .."
+
+  Horn F, Uzum Z, Mobius N, Guthke R, Linde J, Hertweck C. 2015. Draft
+  genome sequences of symbiotic and nonsymbiotic Rhizopus microsporus
+  strains CBS 344.29 and ATCC 62417. Genome Announc. 3(1):e01370-14.
+  doi:10.1128/genomeA.01370-14.
+
+  Citation: Postnikova OA, Hult M, Shao J, Skantar A, Nemchinov LG (2015)
+  Transcriptome Analysis of Resistant and Susceptible Alfalfa Cultivars
+  Infected With Root-Knot Nematode Meloidogyne incognita. PLoS ONE 10(2):
+  e0118269. doi:10.1371/journal.pone.0118269
+
+  Citation: Liu Y, Lin-Wang K, Deng C, Warran B, Wang L, Yu B, et al.
+  (2015) Comparative Transcriptome Analysis of White and Purple Potato to
+  Identify Genes Involved in Anthocyanin Biosynthesis. PLoS ONE 10(6):
+  e0129148. doi:10.1371/journal. pone.0129148
+
+  McTaggart SJ, Hannah T, Bridgett S, Garbutt JS, Kaur G, Boots M. Novel
+  insights into the insect trancriptome response to a natural DNA virus. BMC
+  Genomics. 2015 Apr 17;16(1):310. doi: 10.1186/s12864-015-1499-z. PubMed PMID:
+  25924671; PubMed Central PMCID: PMC4415287.
+
+EvidentialGene has been developed and used on various other gene/genome projects
+by the author in collaborations since 2010/2009, some papers are in print.
+
+

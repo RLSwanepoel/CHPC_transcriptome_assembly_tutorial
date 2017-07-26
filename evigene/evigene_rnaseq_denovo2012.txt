@@ -1,0 +1,75 @@
+
+Date: Thu, 7 Jun 2012 19:22:19 -0500 (EST)
+From: Don Gilbert <gilbertd@cricket.bio.indiana.edu>
+Subject: Re: denovo RNA-Seq
+
+
+The two I've used most are Trinity and Velvet/Oases.  There are papers
+by authors of both, essentially saying their's is best.  I find them
+close now (trinity was poorer last year).  I get somewhat better results
+with Velvet/Oases but it is a bit harder to set up and run than Trinity.
+
+Just now I'm testing the new Soap-transcript from BGI colleauges at
+that meeting.  It may be as good or better than the two above. The
+documentation however is poorer, making it harder to get started with.
+
+To work well for transcript data, both Velvet and Soap should be
+run in multi-kmer mode.  That is the main option, kmer size being
+the read chunk size.  For transcript data, a subset of kmer ranging from 
+21 bases up to read size should be used and results combined.
+(eg. for 100 bp reads, I use something like 89,69,49,39,29,25,23).
+The lower kmers assemble more data but higher kmers are often more
+accurate where they work.  Trinity doesn't need this.
+
+Tesults with these also depend on species and data sets you use.
+If it is a "small" data set, Trinity may do worse than Velvet (small
+a year ago was under 100 million reads, paired end, 50-75 bases).
+
+These all more or less require paired-end reads to do well, Velvet and
+Soap allow you to mix read types, pair insert sizes, but not that yet 
+for Trinity.  Strand-specific reads help prevent joining neighbor genes 
+(if they are reversed).
+
+All of these assemblers give you more assemblies than are real.
+Some filtering is needed.  Eg for multi-kmer programs, many across kmers 
+are same, or nearly same, transcript. Programs like CD-Hit can do that 
+depending on what you want as results.  
+
+These de-novo assemblers are doing better now than the
+genome mapped one (cufflinks is the only good example), but
+they need a minimum read coverage of at least a few reads over your
+transcript, so the 1-transcript per cell genes are still hard to
+pick up.
+
+They all require that you reformat input data some to suit
+them.  Velvet and Soap are the most catholic in data formats
+they accept.
+
+SOAP seems to be faster and require less memory than the other
+two. Velvet needs the most memory (can be 100s of GB for billion
+read sets).  Look for a machine/cluster with at least 64 GB memory,
+250 GB to 500 GB is good.  All these programs use multiple cpus.
+If you are US researcher, NSF-funded TeraGrid/XSEDE.org offer these 
+for asking.
+
+-- Don
+
+Velvet/Oases  : http://www.ebi.ac.uk/~zerbino/oases/
+SOAP-Transcripts: http://soap.genomics.org.cn/SOAPdenovo-Trans.html
+Trinity: http://trinityrnaseq.sourceforge.net/
+
+These papers have some methods and comparisons:
+
+review, Zhao et al. 2011.
+Optimizing de novo transcriptome assembly from short-read RNA-Seq data: a comparative study
+BMC Bioinformatics, 12(Suppl 14):S2 http://www.biomedcentral.com/1471-2105/12/S14/S2
+[Ignore stats on Trinity and Soap here, as those are for last year's versions, now obsolete]
+
+Oases/Velvet. Marcel H. Schulz, Daniel R. Zerbino, Martin Vingron, Ewan Birney 2012.
+Oases: Robust de novo RNA-seq assembly across the dynamic range of expression levels
+Bioinformatics (2012) doi: 10.1093/bioinformatics/bts094 
+http://bioinformatics.oxfordjournals.org/content/early/2012/02/24/bioinformatics.bts094.abstract
+
+Trinity. Yassour M et al. (2011) Full-length transcriptome assembly from RNA-Seq data
+without a reference genome. Nature Biotech. 29:644-652.
+

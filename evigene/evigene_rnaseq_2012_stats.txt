@@ -1,0 +1,185 @@
+
+Transcript assemblies with protein orthology assessment for 3 Eukaryotes.
+Don Gilbert, 2012 June, gilbertd at indiana edu
+
+Protein orthology is used as a way to biologically validate and assess
+transcript assemblies.  This measures relative completeness of
+a protein transcriptome (relative to related species).  Only best matching
+transcript to an ortholog gene family is counted, so result is not
+influenced by extra gene copies (be they real or artifact).  Both the
+strength of alignment (as blastp bitscore) and protein size are measured.
+Gene families with at least 3 species are required, and the median family
+gene is used for scoring, so influences of species-nearness are limited. 
+Average bitscore to a common orthology family set then allows ranking of
+gene sets from same species, different software, and between species.
+Also useful are average bitscore to all families, as a measure of 
+completeness of a gene set, and per-set bitscores.
+
+No model species were evaluated, those with reference gene sets
+that can be compared.  This evaluation relies on gene family
+orthology as the primary measure. Other measures of transcript assembly
+are useful and given elsewhere : coverage completeness and identity
+to expressed sequence, intron validation for genome-mapped data, etc.
+
+Transcript assemblers evaluated
+  Velvet/Oases version v1.2.03/o0.2.06 2012.feb : de-novo assembly
+  SOAPdenovo-Trans, version 2011.dec.22 : de-novo assembly
+  Trinity, version 2012.march.17   : de-novo assembly
+  Cufflinks, version 1.3, 2012.jan : genome-mapped assembly
+Note these were current versions at the start of this evaluation,
+but as of this writing they are mostly superceded by newer releases.
+
+Three species are reported here:  
+  The insect Locusta migratoria transcriptome set is published and available at NCBI-SRA.
+There is no genome assembly for this species.  Methods, data pointers, and result transcript
+assemblies are at http://arthropods.eugenes.org/EvidentialGene/locust/
+  The plant Theobroma cacao genome project publication in is preparation, 2012.  A high
+quality draft genome assembly is used here.
+  The crustacean Daphnia magna genome project is still collecting data.  A draft
+partial genome assembly is used here.
+
+
+These results in summary are
+- Transcript assemblers now recover a large fraction of a species protein families,
+  as complete or near complete equivalents to related species genes.
+- Three de-novo assemblers tested here are closely ranked, and ranking depends on
+  the particular species and data set used.
+    Locust : Velvet/O  > Trinity > SOAPTrans
+    Daphnia: Velvet/O  > SOAPTrans > Trinity >> Cufflinks 
+    Cacao  : SOAPTrans = Velvet/O > Trinity >> Cufflinks 
+    
+- The one genome-mapped assembler, Cufflinks, is trailing behind de-novo assemblers
+  in quality of modeled genes. Other genome-mapped assemblers, Scripture and
+  IsoLasso, appear to be not ready to compare or not actively developed.
+  This is of concern as genome-mapped assembly has in theory advantages over
+  de-novo assembly, of using genome information.
+- Genome mapped gene modelling returns valid orthology genes that are not 
+  assembled from large transcript data sets.  E.g. Augustus predictor with
+  gene evidence.
+- The most complete gene set is derived from several of these methods, when
+  suitable evidence scoring is applied to select best model per locus. No
+  method does better than others at all loci, and each method does better
+  than others at some loci.
+- Genes assembled from RNA transcripts without genomes is a valid way to 
+  discover a species gene set, with caveats that dicriminating paralogs from
+  alternates at one locus, and other refinements, need a genome assembly.
+
+Other species evaluated with early versions of the assembly software are pea aphid and
+jewel wasp.  Results for those are generally consistent with these, except that the
+main de-novo assemblers have all improved, and now are relatively closely matched
+in ability.  For example, this paper reports on 2011 versions and gives results
+similar to our results from 2011, but the software rankings have changed for
+newer versions:
+Zhao et al. 2011. Optimizing de novo transcriptome assembly from short-read RNA-Seq data: 
+a comparative study. BMC Bioinformatics, 12:S2 http://www.biomedcentral.com/1471-2105/12/S14/S2
+
+======================================================================
+
+
+  Orthology average of transcript assembly proteins for 
+  Locusta migratoria, from 448 Million rna-seq pe-reads  (pubmed:21209894 2010)
+
+                Common Families  All     Per Geneset
+Geneset      Bits  dSize tiny    tBits   rFamily rBits
+-----------------------------------------------------
+locust1velo  496   -19    6%     305     8256    379  
+locust1soap  443   -86   14%     262     7838    343  
+locust1trin  466   -85   13%     273     7609    368  
+ ... comparison arthropods ...     
+daphnia      515     2    5%     326     7862    426
+beetle       487    16    3%     308     8273    382
+wasp         483    30    3%     299     8112    379
+fruitfly     458    90    1%     273     7652    366
+------------------------------------------------------
+Statistics
+  nFamily=  4596 Common to all gene sets; 10267 All in any gene set;
+  rFamily= number of families per gene set
+   Bits = ave bitscore using common groups, 
+  tBits = ave bitscore using all groups, 
+  rBits = ave bitscore only for that geneset rFamily
+  dSize = difference in aa size from ortho group median size
+  tiny  = percent of proteins smaller than 2 SD below group median
+Genesets
+  locust1velo = Velvet/Oases version v1.2.03/o0.2.06 2012.feb
+  locust1soap = SOAPdenovo-Trans, version 2011.dec.22
+  locust1trin = Trinity, version 2012.march.17
+  daphnia, beetle, wasp, fruitfly :  published gene sets of arthropod.
+
+
+  Orthology average of transcript assembly proteins for 
+  Daphnia magna, from 1.2 billion rna-seq pe-reads. 
+             Common Families   All      Per Geneset
+Geneset      Bits  dSize tiny  tBits    rFamily rBits
+-------------------------------------------------------
+dmag2011     567   -14    8%    418     7204    502
+dmag3velo    578   -48    8%    448     8318    466 
+dmag3soap    575   -35    8%    435     7840    480 
+dmag3trin    567   -53   10%    426     7798    472 
+dmag3cuff    499  -112   21%    305     5503    480
+-------------------------------------------------------
+  Family counts: Common=5146; All=8655
+  dmag2011   = prelim. gene set from EvidentialGene (best of Augustus evidence-directed models, protein map and transcript assemblies)
+  dmag3velo = Velvet/Oases version v1.2.03/o0.2.06 2012.feb
+  dmag3soap = SOAPdenovo-Trans, version 2011.dec.22
+  dmag3trin = Trinity, version 2012.march.17
+  dmag3cuff = Cufflinks v1.3, 2012.jan 
+
+
+  Orthology average of transcript assembly proteins for 
+  Theobroma cacao, from 671 Million rna-seq pe-reads.
+              Common Families   All      Per Geneset
+Geneset       Bits  dSize tiny  tBits    rFamily rBits
+-------------------------------------------------------
+Thecc1EG      621    17   0.5%    549     15151   568
+cacaornabest  632    2     2%     531     14435   578
+cacao3soap    616    -1    2%     515     14059   575 
+cacao3velo    609    -3    2%     515     14406   561 
+cacao3trin    603    -10   4%     485     13468   566 
+cacao3cuff    561    -37   7%     386     11441   537
+  .. comparison plants ..
+poplar tree   621    0     1%     514     15130   539
+arabidopsis   573    -2    1%     430     13444   508
+-------------------------------------------------------
+  Family counts: Common=11385; All=15690
+  Thecc1EG   = public gene set from EvidentialGene (best of Augustus evidence-directed models, protein map and transcript assemblies)
+  cacao3velo = Velvet/Oases version v1.2.03/o0.2.06 2012.feb
+  cacao3soap = SOAPdenovo-Trans, version 2011.dec.22
+  cacao3trin = Trinity, version 2012.march.17
+  cacao3cuff = Cufflinks v1.3, 2012.jan 
+  cacaornabest = best rna assemblies of velvet, cufflinks, est-newbler per locus 
+        (not including trinity or soap)
+
+
+
+======================================================================
+
+Brief methods
+  For de-novo assembly the multi-kmer method is used for velvet,soap: 
+  e.g. for locust kset="31 23 39", for cacao and dmagna kset="89..25" in 8 steps.
+  Generally kmer close to read size returns fewer but more complete proteins.
+  Insert-size configuration for velvet,soap is done as per data producer's info.
+  Trinity does not use kmers nor insert sizes.  
+  min tr sizes to keep: 160 for velvet, soap, 200 for trinity (default)
+  
+Processing transcripts of soap,velvet,trinity
+  transcript outputs for locust: 
+  soap ntr=362748, velvet ntr=437687, trinity ntr=118,000
+  
+  1. reformat to common headers.
+  2. fastanrdb (exonerate), remove identical tr (mostly <5%)
+  3. maketraa2 : find longest orf proteins from tr, minsize=60aa  
+      annotate %CDS and classify as okutr=%CDS>60, utrbad=%CDS<35, utrpoor=60<%CDS<35, 
+  4. remove similar aa from trset.aa with cd-hit
+      cd-hit -c 0.95 -d 0 -i $nam.ok.aa
+      cd-hit-2d -d 0 -i $nam.ok.aa -i2 $nam.poor.aa
+  5. blastp trset.okpoor.aa x species.db
+      locust orthology set is ARPx3 (arthropods.eugenes.org/arthropods/orthologs/ARP3x/)
+      drosmel,daphniaplx,jewelwasp,tribolium,peaaphid,ixodestick,spidermite,human,zbrafish
+      This set is already classified into ortho gene families
+  6. measure locust tr-set best match to ortho families with 3+ species.
+      6a. Bits: bitscore to median family protein
+      6b. dSize: size difference from median family protein.
+
+
+      
+

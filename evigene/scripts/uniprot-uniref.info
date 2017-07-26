@@ -1,0 +1,42 @@
+
+gzcat uniprot_*_arthropod.tab.gz | cut -f1 | sort -u > uniprot_all_arthropod.ids 
+
+gzcat uniref50.xml.gz | egrep '^<(entry id=|name.Cluster|dbReference type=)' | perl -ne\
+'END{putc()} if(/^<entry id=.(\w+)/){ putc(); $cid=$1; } \
+elsif(/^<name>Cluster:\s*([^<\n]+)/) { $cna=$1; } \
+elsif(/^<dbReference/){ ($dx)=m/id=.([^">]+)/; push @dx,$dx if($dx); } \
+sub putc { print join("\t",$cid,$cna,@dx),"\n" if($cid); $cid=$cna=""; @dx=(); }' \
+> uniref50.name.tab
+
+
+gzcat uniref50.name.tab.gz | cat uniprot_all_arthropod.ids - | perl -ne\
+'if(/^(\S+)$/){ $d{$1}++; } elsif(/\t/) { chomp; ($ud,$una,@d)=split"\t"; $p=0; foreach $ad (@d) \
+{ if($d{$ad}) { $p=1; last; } }; print "$ud\t$ad\t$una\n" if $p; }' > uniprot_all_arthropod.uniref50.tab
+
+gzcat uniref50.xml.gz | cat uniprot_all_arthropod.uniref50.tab - | perl -ne 'END{putc()} if(/^(UniRe
+f50_\S+)\t(\S+)\t(.+)$/){ $ud{$1}=$3; } else { \
+if(m/^<entry id=.(\w+)/){ putc() if $p; $cid=$1; $cna=$ud{$cid}; $p= ($ud{$cid})?1:0; $ina=$clen=0; } \
+elsif($p and m/^<sequence length=.(\d+)/) { $clen=$1; $ina=1; $aa=""; } \
+elsif(m,^</sequence>,) { $ina=0; } elsif($ina and /^\w/) { $aa.=$_; } } \
+sub putc { print ">$cid name=$cna;size=$clen\n$aa" if($cid and $aa); $cid=$cna=$aa=""; }' \
+> uniprot_all_arthropod.uniref50.aa
+
+.........
+1921448685 Jul 27 10:00 /bio/bio-grid/aabugs4/uniprot/uniref50.xml.gz
+
+cat uniprot_*_plants.tab | cut -f1 | grep -v '^#' | sort -u > uniprot_plants.ids 
+
+gzcat $upx/uniref50.name.tab.gz | cat uniprot_plants.ids - | perl -ne\
+'if(/^(\S+)$/){ $ids{$1}++; } elsif(/\t/) { chomp; ($ud,$una,@d)=split"\t"; $ad=$p=0;\
+foreach $d (@d) { if($ids{$d}) { $ad=$d; $p=1; last; } } print "$ud\t$ad\t$una\n" if $p; }'\
+> uniprot_plants.uniref50.tab
+
+
+# or use uniref.fasta.gz ...
+gzcat $upx/uniref50.xml.gz | cat uniprot_plants.uniref50.tab  - | perl -ne 'END{putc()} \
+if(/^(UniRef50_\S+)\t(\S*)\t(.+)$/){ $ud{$1}=$3; } else { \
+if(m/^<entry id=.(\w+)/){ putc() if $p; $cid=$1; $cna=$ud{$cid}; $p= ($ud{$cid})?1:0; $ina=$clen=0; } \
+elsif($p and m/^<sequence length=.(\d+)/) { $clen=$1; $ina=1; $aa=""; } \
+elsif(m,^</sequence>,) { $ina=0; } elsif($ina and /^\w/) { $aa.=$_; } } \
+sub putc { print ">$cid Name=$cna;size=$clen\n$aa" if($cid and $aa); $cid=$cna=$aa=""; }' \
+> uniprot_plants.uniref50.aa

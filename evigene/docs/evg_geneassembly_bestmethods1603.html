@@ -1,0 +1,127 @@
+<html>
+<title>
+EvidentialGene Gene assembler best methods
+</title>
+<body>
+<h1>EvidentialGene Gene assembler best methods, 2016 update</h1>  
+
+<big>
+This recent <a href="http://arthropods.eugenes.org/EvidentialGene/arthropods/mosquito/">EvidentialGene reconstruction of Aedes and Anopheles mosquito genes</a> uses several gene assemblers.  Comparison of the assemblers ability to accurately reconstruct genes is still needed, as many projects and publications are not using such effectively.  Accurate coding gene construction can be measured objectively, with coding sequence metrics (protein size, completeness and especially alignment to reference proteins), as it has been for a decade or more.  
+</big>
+<p>
+
+<!-- add soft urls -->
+<big><b> Gene assemblers</b><br>
+  <a href="https://www.ebi.ac.uk/~zerbino/oases/">velvet/oases</a> : v1.2.10 2013;  &nbsp; &nbsp;
+  <a href="http://www.cs.hku.hk/~alse/idba_tran/">idba-tran</a>    : v.1.1.1 2013;  &nbsp; &nbsp;
+  <!--
+  http://i.cs.hku.hk/~alse/hkubrg/projects/idba_tran/
+  http://hku-idba.googlecode.com/files/idba-1.1.1.tar.gz
+  -->
+  <a href="http://soap.genomics.org.cn/SOAPdenovo-Trans.html">soap-trans</a>   : v.1.03  2013;  &nbsp; &nbsp;
+  <!-- https://sourceforge.net/projects/soapdenovotrans/files/SOAPdenovo-Trans/ -->
+  <a href="https://github.com/trinityrnaseq/trinityrnaseq/wiki">trinity</a>     : trinityrnaseq_r20140717 (v2.1.1)
+  <br>
+  <!-- http://trinityrnaseq.github.io/ -->
+</big><p>
+
+<big>Velvet/Oases remains single best gene assembler, but note that each assembler contributes some uniquely best genes. The majority of genes are most accurately assembled with kmer (read shred size) at or above 1/2 read length of 100 bp.  Trinity is less capable in part due to its restricted kmer choice, and lack of scaffolding with read pairs. </big>
+
+<table cellpadding="6" cellspacing="8" border=0 >
+<tr><td bgcolor="#f8f8f8">
+<pre><b>Anopheles albimanus, Longest 10K genes</b>
+-----------------------------
+  <b>Count       Unique      Method</b>
+<b>assembler</b>
+ 4622,46.2%  1464,14.6%u   idba
+ 2900,29.0%   352, 3.5%u   soap
+ 2408,24.1%   305, 3.1%u   trin
+ 7636,76.4%  4492,44.9%u   velv 
+<b>kmer</b>
+ 2219,22.2%     80, 0.8%u  k05
+ 3903,39.0%    811, 8.1%u  k25 
+ 5130,51.3%   1255,12.6%u  k35
+ 4897,49.0%    771, 7.7%u  k45
+ 4553,45.5%    492, 4.9%u  k55
+ 4764,47.6%    779, 7.8%u  k65
+ 4341,43.4%    544, 5.4%u  k75
+ 3920,39.2%    375, 3.8%u  k85
+ 3460,34.6%    168, 1.7%u  k95
+------------------------------</pre>
+</td><td bgcolor="#f8f8f8">
+<pre><b>Anopheles funestus, Longest 10K genes </b>
+------------------------------
+  <b>Count       Unique      Method</b>
+<b>assembler</b>
+ 4092,40.9%  2450,24.5%u   idba
+ 2059,20.6%   682, 6.8%u   soap
+ 1754,17.5%   561, 5.6%u   trin
+ 6122,61.2%  4505,45.1%u   velv
+<b>kmer</b>
+ 1495,15.0%    263, 2.6%u  k05
+ 2785,27.9%   1156,11.6%u  k25
+ 4047,40.5%   2077,20.8%u  k35
+ 3053,30.5%   1112,11.1%u  k45
+ 2831,28.3%    983, 9.8%u  k55
+ 2173,21.7%    680, 6.8%u  k65
+ 1520,15.2%    399, 4.0%u  k75
+ 1117,11.2%    378, 3.8%u  k85
+  719, 7.2%    213, 2.1%u  k95
+------------------------------</pre>
+</td></tr>
+<tr><td bgcolor="#f8f8f8">
+<pre><b>Anopheles albimanus, Highly conserved
+  (BUSCO_drosmel 2561 genes)</b>
+  <b>Count       Unique      Method</b>
+<b>assembler</b>
+ 1082,42.2%   309,12.1%u   idba
+  692,27.0%    75, 2.9%u   soap
+  569,22.2%    50, 2.0%u   trin
+ 2089,81.6%  1285,50.2%u   velv
+<b>kmer</b>
+  458,17.9%     28, 1.1%u  k05
+  957,37.4%    174, 6.8%u  k25
+ 1177,46.0%    251, 9.8%u  k35
+ 1169,45.6%    200, 7.8%u  k45
+ 1085,42.4%    133, 5.2%u  k55
+ 1203,47.0%    266,10.4%u  k65
+ 1070,41.8%    192, 7.5%u  k75
+  950,37.1%    136, 5.3%u  k85
+  787,30.7%     70, 2.7%u  k95
+------------------------------</pre>
+</td><td bgcolor="#f8f8f8">
+<pre><b>Anopheles funestus, Highly conserved 
+  (BUSCO_drosmel 2648 genes)</b>
+  <b>Count       Unique      Method</b>
+<b>assembler</b>
+ 1269,47.9%   700,26.4%u   idba
+  686,25.9%   178, 6.7%u   soap
+  515,19.4%    90, 3.4%u   trin
+ 1655,62.5%  1054,39.8%u   velv
+<b>kmer</b>
+  494,18.7%    107, 4.0%u  k05
+  822,31.0%    261, 9.9%u  k25
+ 1089,41.1%    465,17.6%u  k35
+  925,34.9%    293,11.1%u  k45
+  883,33.3%    245, 9.3%u  k55
+  731,27.6%    165, 6.2%u  k65
+  540,20.4%    103, 3.9%u  k75
+  411,15.5%    119, 4.5%u  k85
+  240, 9.1%     68, 2.6%u  k95
+------------------------------</pre>
+</td></tr>
+</table>
+<p>
+
+<big>
+There are various comparison papers out there, contradicting each other, on how to pick a best gene assembler. One reason for those contradictions is that some comparisons use only 1 kmer setting, which isn't good, or use error-prone ways of merging multiple gene assemblies.   The Evigene way is to produce and assess <b>millions</b> of gene assemblies for coding sequence qualities, pulling out the most complete genes from that huge pile of chaff.</big>
+<p>
+
+<big>
+Many gene assembler comparison papers focus on technical measures like "N50" length of transcripts,  or "reads-mapped-back" counts of gene fragments recovered.  These are not biological accuracy measures.  I can easily construct transcripts that map all reads and that are longer than anyone elses, but these are not biological transcripts, they are artifacts.  A simple, meaningful gene quality replacement for N50 transcript length is the <a href="/EvidentialGene/about/EvidentialGene_quality.html"><b>average length of 1000 longest proteins</b></a>, which has biological maxima, is quick and easy to calculate, and will usefully compare gene sets of same and related species.
+<p>
+
+-- Don Gilbert, 2016 March
+</big>
+</body></html>
+

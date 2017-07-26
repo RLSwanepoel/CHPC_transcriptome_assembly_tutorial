@@ -1,0 +1,81 @@
+# evigene_alleuk_cdssize.tab
+#
+# Average size of longest 1000 proteins (clustered 90%)
+# for EvidentialGene and other eukaryote proteomes 2012 .. 2002
+#
+                    len_AA    lenmd_AA  date  clade   source_notes
+human2_2012          2457      2005      2012  vert    ncbi  # has-alt
+human2t1_2012        2285      1863      2012  vert    ncbi,noalt  # no-alt
+human1_2005          2064      1730      2005  vert    ensembl  # has-alt
+#
+zebrafish2_2010      2295      1887      2012  vert   genoproj/genoasm,curated    
+zebrafish1_2005      1734      1469      2005  vert   genoproj/genoasm,curated    
+#
+killifish1_evg12     2265      1889      2012  vert    evigene/genoasm # from cdhit90
+killifish1t1_evg12   2089      1809      2012  vert    evigene/genoasm,noalt # from cdhit90
+#
+medaka_2012          2046      1742      2012  vert   ensembl/genoasm  # Oryzias_latipes.MEDAKA1.67
+medakat1_2012        2012      1722      2012  vert   ensembl/genoasm,noalt  # Oryzias_latipes.MEDAKA1.67
+stickleback_2012     2122      1809      2012  vert   ensembl/genoasm  # Gasterosteus_aculeatus.BROADS1.67 
+sticklebackt1_2012   2088      1773      2012  vert   ensembl/genoasm,noalt  # Gasterosteus_aculeatus.BROADS1.67 
+#
+# Plants ...................................
+arabidopsis10_2010   1422      1253      2010 plant  genoproj/genoasm,curated,TAIR10
+arabidopsis10t1_2010 1338      1189      2010 plant  genoproj/genoasm,noalt,curated,TAIR10
+arabidopsis5_2005    1363      1221      2005 plant  genoproj/genoasm,curated #,TAIR5? 
+#  
+cacao1_evg2012       1511       1352      2012 plant  evigene/genoasm,tralso  # pub3i.good_cd90 calc same way as others
+cacao1t1_evg2012     1480       1327      2012 plant  evigene/genoasm,noalt,tralso  # pub3i.good_cd90 calc same way as others
+#
+populus2_2011        1476      1319      2011 plant  genoproj/genoasm  # jgi:Populus.trichocarpa.v2.2/2011 # cd-hit clustered
+populus2t1_2011      1459      1305      2011 plant  genoproj/genoasm,noalt  # jgi:Populus.trichocarpa.v2.2/2011 # cd-hit clustered
+populus1_2008        1314      1194      2008 plant  genoproj/genoasm  # jgi:Poptr1_1_GeneModels/20080522
+#
+#
+# Insects .................................
+drosmel5_r5_30       2181      1784     2011  insect   genoproj/genoasm,curated # drosophila mel versions 2002 to 2011
+drosmel5t1_r5_30     1865      1517     2011  insect   genoproj/genoasm,noalt,curated # drosophila mel versions 2002 to 2011
+# drosmel5_r5_5      2073      0        2008  insect   genoproj/genoasm,curated
+drosmel4_r4_0        1977      0        2004  insect   genoproj/genoasm,curated
+drosmel3_r3_0        1876      0        2002  insect   genoproj/genoasm,curated    
+#  
+tribolium           1824      1482      2011  insect   genoproj/genoasm   # TCAST_cd90
+honeybee4_v45       1849      1498      2011  insect   genoproj/genoasm   # apismelv5 AMELL_cd90
+honeybee1_v11       1808      1457      2005  insect   genoproj/genoasm   # amel_OGSv1.1_cd90
+#
+nasvit2_ogs2        1951      1678      2012  insect   evigene/genoasm,tralso,nasonia_vit 
+nasvit2t1_ogs2      1867      1579      2012  insect   evigene/genoasm,noalt,tralso,nasonia_vit 
+nasvit1_ogs1        1806      1535      2009  insect   genoproj/genoasm
+#
+micdemol1_tsa       1644      1350      2012  insect   author/trasm,ncbi_tsa # PRJNA72699  Microplitis demolitor:  Ichneumonoidea;  Velvet v1.1.04: Illumina   22-FEB-2012
+# 
+acypi2_2011         2015      1705      2011  insect   evigene/bestof3/genoasm,tralso,pea_aphid 
+acypi2t1_2011       1991      1691      2011  insect   evigene/bestof3/genoasm,noalt,tralso
+acypi1_2010         1607      1371      2010  insect   genoproj/genoasm
+#  
+locust1_best5       2077      1722      2012  insect   evigene/trasm # cdbest adding vel5; has dup.tr
+locust1t1_best5     1834      1528      2012  insect   evigene/trasm,noalt # cdbest adding vel5; remove dup.tr
+#
+whitefly1_best      2298      1926      2012  insect   evigene/trasm # has dup.tr
+whitefly1t1_best    2082      1786      2012  insect   evigene/trasm,noalt  # removed dup.tr w/ megablast
+whitefly0_tsa       733       681       2012  insect   author/trasm,ncbi_tsa #,soaptr?
+#
+# Crustacea .................................
+daphniaplx2_evg10   1984      1742      2010  crusta     evigene/genoasm   # cdhit calc
+daphniaplx1_jgi06   1610      1342      2006  crusta     genoproj/genoasm
+#
+daphniamag2_2012    2210      1787     2012  crusta     evigene/trasm,evgvelasm  # no duptr removed;genes201208a/vel-strasm  asmrna4/asmfull/trall7set9rbest.*
+daphniamag2t1_2012  1973      1636     2012  crusta     evigene/trasm,noalt,evgvelasm  # 2436 duptr removed == these include valid alts; genes201208a/vel-strasm  asmrna4/asmfull/trall7set9rbest.*
+daphniamag1_2011    1894      1605     2011  crusta     evigene/genoasm,tralso
+#
+litova1_vel13       1723      1421     2012  crusta     evigene/trasm,velvet      #  has duptr;  Pacific white shrimp
+litova1t1_vel13     1532      1276     2012  crusta     evigene/trasm,noalt,velvet   #  no duptr;  Pacific white shrimp
+litova0_tsa         719       0        2012  crusta     author/trasm,ncbi_tsa,soaptr #? TSA: Litopenaeus vannamei; BPrj:PRJNA73443; SOAPdenovo: Illumina 11-APR-2012
+eriosi0_tsa         616       0        2012  crusta      author/trasm,ncbi_tsa,soaptr #TSA: Eriocheir sinensis; Chinese mitten crab BPrj:PRJNA80779; SOAPdenovo v. v1.04: Illumina  25-APR-2012 
+#
+# Ticks : drop? .................................
+# tetur_2011        1463      0       2011    tick  # or 2010 ? spider mite
+# ixodes_2011       1190      0       2011    tick
+#
+#------------------------------------------------
+

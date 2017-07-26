@@ -1,0 +1,31 @@
+
+EvidentialGene
+
+    configuration
+          evidence files and options are now contained in a config file.
+          This is used by annotate_predictions.pl and evaluate_predictions.pl
+
+     syntax: 
+       key = value lines
+       + value continuation
+       grouping headers: 
+       end grouping
+       # comments
+
+   evigene_eval.conf example:
+       name    nasonia_vit_genes2
+       genome  nasvit1asm
+       date    2011mar
+       evidence:
+              est       =   evidence/est_uniq.gff.gz
+              pro       =   evidence/protein_uniq.gff.gz
+       evkeys  =   est pro rseq ref tar terepeat
+       evoption:
+              est  =  overlapfilter -strand -pass 'exon,HSP' -pct 50 -act keep -base
+              pro  =  overlapfilter -strand -pass CDS -pct 50  -act keep -base
+       ankeys =  est pro rseq ref intr pasa tar terepeat
+       anmorekeys = homology_annot bestgenes 
+       anoption:
+              est  =  overlapfilter -strand -pass 'exon,HSP' -pct 10 -act markbase
+              pro  =  overlapfilter -strand -pass CDS -pct 10 -act markidbase
+

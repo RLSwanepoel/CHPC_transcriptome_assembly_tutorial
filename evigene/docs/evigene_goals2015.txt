@@ -1,0 +1,102 @@
+Date: Mon, 12 Jan 2015 19:43:06 -0500 (EST)
+From: Don Gilbert <gilbertd>
+Subject: EvidentialGene goals 2015, part 1
+
+
+Evigene is a continual work in progress for me, built partly from my
+own goal of improving genome/gene annotation, partly from
+collaborators needs w/ the various animal/plant groups I work w/. It
+has more in it than anyone else can easily decipher (even I have to
+dig thru notes to reuse various parts).  My more recent projects have
+required genome x transcriptome merging, where there are obvious
+errors in both (genome gaps, messy predictions, messy mRNA
+assemblies). I don't have any great solutions to this, however I've
+some glimmerings of how to deal w/ it, beyond spending lots of expert
+annotation time.
+
+One of the clues I got from recent Killifish and Daphnia projects is
+that genome predictions, and errors from genome based genes, need to
+be treated with care. Those errors can be greater than past experience
+suggests, in part because in past we had only genome-based genes, and
+in part because short-read genome assemblies that are common now are
+also often a step backward in accuracy.
+
+A second clue how to merge genome/nogenome gene sets is that if you
+have enough mRNA-seq, esp. from different populations, you can gain
+accuracy in de-novo gene construction by looking for consensus of mRNA
+assemblies across populations.  That is if you assemble same genes
+independently from 3 populations, confidence in their quality goes up.
+
+Merging genome and transcriptome models of genes then becomes, to me,
+a matter of assigning quality scores to each locus model, qualities
+derived from the mix of mapping to genome, consensus among population
+transcriptomes, orthology measures, etc, with allowance for errors in
+all the measurements and weighting by attribute reliability (e.g.
+orthology to reference genes can be more reliable than alignment to genome
+assembly). This is automatable but as yet it isn't directly part of
+Evigene software as I had to work out details for each species data
+sets.
+
+The original version of Evigene is entirely genome-map based, and
+there quality scores are assigned to each gene model by mapping to
+genome, e.g. how much expression evidence, or protein evidence, per
+genome-gene span. The Evigene solution for best model/locus is a
+weighted sum of evidence scores, weighting depending on reliability of
+each kind of evidence. That part of code is usable but also lacking
+ease of use and documentation (more funding will let me pursue
+documenting and ease of use by others for this part).
+
+The mRNA assembly classification part of Evigene (I guess I call it
+Evigene-M, versus the genome-mapped Evigene-G), is simpler and more
+automated now, others are using like Nakasugi et al. And it works,
+seems to be holding up as others try it out, in producing best quality
+mRNA transcriptomes.
+
+What I would like to do next is merge these two, well enough that
+others can use, in the same basic sense that models for each locus are
+scored by evidence qualities, a classifier then decides which are
+biologically best and valid alternates, or rejects.   The primary need
+here is to separate the genome-mapping requirement of Evigene-G into
+genome-map qualities that can be combined with Evigene-M methods and
+transcript assessments.
+
+This becomes mostly a matter of scripts that make tables* with model
+IDs, locus alignment and quality scores, then design appropriate
+classifier for wading thru such tables to spit out the good, bad and
+ugly sets of models (ugly is the right word for those valid genes that
+break the rules: selenocytocenes, trans-spliced genes, true fusions as
+opposed to join artifacts, reverse transcribed, .. these exist and I'm
+finding them more thru the mRNA assemblies because most genome-based
+modellers avoid these complexities).
+
+Other genome informatics projects are going in other directions, e.g.
+NCBI, Ensembl, Augustus, Maker,  are aiming for genome-map only uses
+of RNA, without desire to de-novo assemble RNA. Trinity in Brian
+Haas's and collaborators hands are going probably in both directions,
+genome-free and genome-based.  Much of Haas's work and overall
+algorithms show up in Evigene, from PASA and EvidenceModeller. I've
+used and would have continued to use those, but found basic flaws in
+how they determined best gene models that I didn't think could be
+corrected in those programs.
+
+Basic theses of Evigene are (1) that any of a large set of models for a
+given locus can be deterministically measured and classified as
+biologically most accurate with gene evidence (this is in essense how
+expert annotators work), 
+(2) that many different modelling programs/parameters are needed to
+produce among them the best gene model for each locus (we know this
+from years of genome projects), and
+(3) that models at each locus can and should be independently assessed
+for evidence (with gene-neighborhood metrics for joins, overlaps and
+such).
+
+EvidenceModeller didn't allow for this but has a majority vote among
+gene modellers that tends to pick lowest common denominators, ie.
+somewhat flawed models.  It also lacked the details of evidence
+scoring I felt where needed for per locus quality measures (ditto the
+related gene combiner programs GLEAN, Evigan).
+
+- Don Gilbert
+
+* an object oriented database, as is much of genomics: tables of IDs,
+attributes and scores.

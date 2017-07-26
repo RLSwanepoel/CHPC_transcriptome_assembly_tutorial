@@ -1,0 +1,158 @@
+
+How to get Best mRNA Transcript assemblies.
+http://eugenes.org/EvidentialGene/
+by Don Gilbert, 2013 Jan
+
+Don't:  select best by longest transcript.  This selects for errors and misassemblies.
+    Don't select best by greatest read-abundance measure.
+    
+Do:  select best by longest protein.  This selects biologically best mRNA assemblies.
+  The longest proteins correlate strongly with strongest homology to
+  other species genes, and have many fewer measurable errors than
+  longest transcripts, when compared to reference genes. Current
+  assembly software does not distinguish abundance with errors from
+  completely accurate high abundance assemblies.
+
+Don't: use one run of one assembly program, default options. 
+Do:    use several assembly methods, parameters and programs.  
+  Each assembly program and parameter set will produce some better
+  transcripts than the others. The top ranked assembly methods all
+  produce somewhat different results from same data. Selecting best from
+  them all will get you 20% to 100% better assemblies.
+  
+Don't: produce many assembly variants with multiple kmers and options,
+  then throw out all but one option result.
+Do:    produce millions of transcript assemblies using multiple kmers,  
+  and vary other options such as minimum read/pair count.
+
+  Each variant assembly has some of the best assemblies at different
+  loci.  No single assembly has all better than others, because of the
+  large variation in expression levels, in gene sizes, types of read
+  errors, etc., that require different options and methods.
+
+  Use multiple kmer sizes, from read-size down to 21.  The long kmer
+  assemblies use fewer reads, but tend to have fewer mistakes, than
+  short kmer assemblies.   Conversely, short kmer will use most of the
+  reads, and many of these will be more complete assemblies, but they
+  have a higher proportion of mis-assemblies, joins, retained introns,
+  indels, frameshifts.  For 100 bp reads, I use 95..21 in steps of
+  ~10, with more at low end (e.g. 95,85,..,35,29,25,21).
+  
+  Velvet/Oases, SoapDenovo-Trans, and Trinity all produce good
+  assemblies, in roughly that order in my work, and each produces some
+  best assemblies the others miss.   Velvet and SOAP both can use
+  multiple kmers, and are capable of scaffolding over mate pair ends.
+  Kmer handling differs for assemblers, Velvet and SOAP have different
+  "best" kmers for same data, and Trinity picks its own single kmer.
+
+Don't : use assembly-of-assembly programs such as CAP or Oases -merge
+
+  This is a variant of selecting by longest transcript, which
+  means picking more errors. These assembly-of-assembly programs do not use
+  read-abundances, mate pairings, nor read quality data to assess where
+  sub-assemblies can be properly joined.  They use only overlap of
+  sequence, which will include (weakly) expressed introns, expressed
+  inter-genic spans, expression errors, random alignments, etc.
+  
+Do: use scaffolding options with Velvet, SoapDenovo, others, to use mate-pair
+    information to fill in with gaps. This builds longer accurate assemblies.
+
+Don't: use Cufflinks only for genome-mapped RNA-seq. 
+  
+  Cufflinks underperforms in assembly versus de-novo assemblers like
+  Velvet/Oases, Trinity and SoapDenovo-Trans, when read abundance is
+  high enough.  It also has a higher rate of join and UTR artifacts
+  for well-expressed regions, and tends to miss more valid expressed loci.  
+  It will produce some best assemblies, especially at the low end of expression, 
+  as it uses genomic sequence to fill RNA gaps.
+
+Do: Use de-novo assembliers with genome-mapped reads.
+
+  The de-novo assemblers perform well in genome-partitioned data, and
+  produce transcript assembly over gaps in genome. They can be very
+  efficient (low-memory use, fast in cluster-parallel operation). See
+  for instance this script, input is mapped RNA reads, plus a span
+  table that partitions mapped reads into genomic chunks for assembly
+  into loci (now configured with velvet/oases).
+  http://arthropods.eugenes.org/EvidentialGene/evigene/scripts/rnaseq/trasmstrandspan.pl
+
+Don't: use less than 200 to 500 Million RNA reads, mate-paired, of 100 bp or better
+  length, high quality, and expect to get a complete transcriptome.
+  
+Do:    keep adding more RNA-seq as funds/effort permit, and assemble all
+   from treatments/clones/close-related species where data is available.
+   Use digital normalization and genome-mapped partitioning to assemble very
+   large data sets in parts.
+   More data will improve on the low-expression assemblies, and will capture alternate
+   transcripts from clones/treatments/etc.  Once you have perfect transxripts,
+   then you can back-map reads to measure relative expression in treatments.
+   
+   Digital normalization with digitnorm/khmer  helps with large data
+   sets (http://ged.msu.edu/papers/2012-diginorm/).  It can produce
+   better results than using all data.  With current large data sets
+   (billions of reads) this or some kind of data partitioning or
+   filtering is needed to de-novo assemble. With a genome assembly to
+   map reads, large RNA sets can be be partitioned into many small
+   compute tasks.
+   
+   
+Don't: expect your species/data set to assemble in same way as others have reported.
+  Don't rely on older software versions without testing newer, and don't expect
+  newer versions to always be better (but often they have been).
+     
+Do: assess quality of mRNA assemblies with protein metrics.
+  One way to get perfect assemblies is to put effort into testing software, parameters
+  with your data set, and having quick, simple quality metrics helps here.
+  
+  A simple but useful metric is the average protein size of 1000 longest proteins.
+  This has a biological maximum as they are biologically expensive,
+  and long proteins are usually a well-conserved set. Long proteins
+  are also the hardest for mRNA assemblers to get right; they are more
+  suseptible to artifacts and missing data.  Size is independent of
+  orthology scoring, which is relative to nearest neighbor, but
+  correlates well with orthology. This metric can be easily computed,
+  and is not affected by a large collection of partial assemblies.
+  
+  See http://arthropods.eugenes.org/EvidentialGene/about/EvidentialGene_quality.html
+  The observed biological maxima are
+    Vertebrates:  2300 aa,  Insects/Crustacea : 2000 aa,  Plants : 1500 aa
+  (plants lack the long muscle proteins).
+  If your animal/plant transcriptome assemby falls 100s of aa below those, it
+  is likely incomplete, lacking data or best assembly method.  
+  
+  Other assessments are needed, protein homology scoring is the standard,
+  RNA read mapping rates and errors help also.
+  But the simple metrics of protein size, CDS/UTR ratio, and partialness can
+  be calculated quickly on millions of assemblies to help filter best set.
+  CD-Hit clustering of proteins is a quick operation that removes the many
+  fragments of longer proteins found in large transcript assembly sets.
+  
+Do: use EvidentialGene scripts and methods to aid transcript assembly.
+  These have been optimized to use best methods that work in conjunction with 
+  other gene-assembly, annotaion and analysis methods.
+Don't: expect EvidentialGene methods/scripts to be easy to use yet.
+  If you don't read and write some Perl and Unix scripting, this
+  isn't for you.
+
+There are caveats to all these does and donts, of course.  
+  - for assembly-of-assembly programs, they may produce enough better
+assemblies, and poorer assemblies can be filtered out. Or better to
+separate good and poor first assemblies, then use the good only
+(assemblies with partial proteins but not poor CDS/UTR ratio).
+  - using one good assembly program with various options can be better
+than using several mediocre assembly programs.
+-----------------------------------------------------------------------
+
+Use this pipeline script instead of maketraa.sh, update 2013 April  
+  EvidentialGene scripts/prot/tr2aacds.pl
+  http://eugenes.org/EvidentialGene/about/EvidentialGene_trassembly_pipe.html  
+# Use this script to compute best proteins from mRNA assemblies:
+#   http://eugenes.org/EvidentialGene/evigene/scripts/rnaseq/maketraa.sh
+# 
+# It relies on 'cd-hit' for cluster selection of longest proteins
+# http://weizhong-lab.ucsd.edu/cd-hit/ as well as other scripts in
+# EvidentialGene. See also evigene/scripts/rnaseq/processtr.sh
+
+Get all EvidentialGene scripts at ftp://arthropods.eugenes.org/evigene/
+as with  "curl -o evigene.tar ftp://arthropods.eugenes.org/evigene.tar"
+  

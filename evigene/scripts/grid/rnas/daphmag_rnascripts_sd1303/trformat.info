@@ -1,0 +1,30 @@
+
+evs=$HOME/bio/evigene/scripts
+$evs/rnaseq/trformat.pl -log -out dmag5vel5nun1.tr -prefix dmag5nun1 -in  vel5nun1_??/transcripts.fa
+$evs/rnaseq/trformat.pl -log -out dmag5nun1soap.tr -prefix dmag5nun1 -in  sod*/*.scafSeq.gz 
+
+#.. data/group  .. note 15+GB data slices too big for soap, velv ok down to 59kmer
+#.. redo unmap read assembly by group/repls, ~10GB each
+fq4xun: cat ../fastq4/names.info | grep Dman | grep XINB | sort -k4,4 -k2,2 | perl -ne'($nn,$fn,$cl,$tr)=split; $gn=lc($cl.$tr); if($gn ne $lgn) { putf($lgn,@fn) if(@fn); $lgn=$gn; @fn=($fn); } else { push @fn,$fn; } sub putf{ my($g,@f)=@_; $fp=join(",",@f); for $i (1,2) { $fo="$g.unc.$i.fq"; print "cat \{$fp\}_\*.unc.$i.fq \> $fo\n" unless(-f $fo); } }' 
+
+cat {Dman_32,Dman_62,Dman_76,Dman_77}_*.unc.1.fq > xinb3_co.unc.1.fq
+cat {Dman_32,Dman_62,Dman_76,Dman_77}_*.unc.2.fq > xinb3_co.unc.2.fq
+cat {Dman_51,Dman_78,Dman_79}_*.unc.1.fq > xinb3_cr.unc.1.fq
+cat {Dman_51,Dman_78,Dman_79}_*.unc.2.fq > xinb3_cr.unc.2.fq
+cat {Dman_42,Dman_64,Dman_65}_*.unc.1.fq > xinb3_fi.unc.1.fq
+cat {Dman_42,Dman_64,Dman_65}_*.unc.2.fq > xinb3_fi.unc.2.fq
+
+ 1336  env inpe1=`pwd`/fq4xun/xinb3_pa.unc.1.fq qsub -q normal soaprun5xun3.sh
+ 1341  env inpe1=`pwd`/fq4xun/xinb3_cop2.unc.1.fq qsub -q normal soaprun5xun3.sh
+ 1353  env inpe1=`pwd`/fq4xun/xinb3_ca.unc.1.fq qsub -q normal soaprun5xun3.sh
+ 1379  env inpe1=`pwd`/fq4xun/xinb3_bn.unc.1.fq qsub -q normal soaprun5xun3.sh
+ 1380  env inpe1=`pwd`/fq4xun/xinb3_bx.unc.1.fq qsub -q normal soaprun5xun3.sh
+ 1381  env inpe1=`pwd`/fq4xun/xinb3_fi.unc.1.fq qsub -q normal soaprun5xun3.sh
+ 1382  env inpe1=`pwd`/fq4xun/xinb3_co.unc.1.fq qsub -q normal soaprun5xun3.sh
+ 1305  env inpe1=`pwd`/fq4xun/xinb3_bx.unc.1.fq qsub -q normal velrun5xun3.sh
+ 1318  env inpe1=`pwd`/fq4xun/xinb3_pa.unc.1.fq qsub -q normal velrun5xun3.sh
+ 1355  env inpe1=`pwd`/fq4xun/xinb3_co.unc.1.fq qsub -q normal velrun5xun3.sh
+ 1387  env inpe1=`pwd`/fq4xun/xinb3_bn.unc.1.fq qsub -q normal velrun5xun3.sh
+ 1388  env inpe1=`pwd`/fq4xun/xinb3_ca.unc.1.fq qsub -q normal velrun5xun3.sh
+ 1389  env inpe1=`pwd`/fq4xun/xinb3_fi.unc.1.fq qsub -q normal velrun5xun3.sh
+ 1392  env inpe1=`pwd`/fq4xun/xinb3_cr.unc.1.fq qsub -q normal velrun5xun3.sh

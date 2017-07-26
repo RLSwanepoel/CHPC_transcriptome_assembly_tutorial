@@ -1,0 +1,122 @@
+
+# asmrna_dupfilter2 work 1602
+# evigene/scripts/rnaseq/asmrna_dupfilter2.pl
+
+# needs work at
+sub identityclass {
+  my($outh, $infile, $insorted)= @_;
+  
+  if(ref($infile)) { $inh= $infile; } # STDIN,.. sort ??
+  else {
+  	# ($ok,$inh)= openRead($infile,1);
+    if($insorted) { open(IN,$infile) or die "reading $infile"; $inh=*IN; }
+    else { open(IN,"sort -k2,2nr -k7,7nr -k6,6n $infile |") or die "reading $infile"; $inh=*IN; }
+    
+    ## UPD 1602: maybe sort is bad for main/alt class mixup, lots of same align/ident tr, 
+    ## 1st in is "main", should collect all 1st.qd x all td, then work on td>qd equal set
+    ##   sort -k2,2nr -k7,7nr -k6,6n . for 1st in, THEN sort -k1,1 .. == 1st qd ??
+    ## need other way to collect all pairs, large size.
+  }
+
+}
+
+=item problem case 1602, 
+ .. two locus misclassed with dupl each
+ .. all have align=4374, cds=4371, ident=4368.. varies a bit, trlen varies some
+ .. ?? cdhitest -c 1 didnt mark as same due to ident variance.
+
+Loc6707t2	= Loc6159t5, and Loc1420t2 = Loc1380t6
+egrep '^(anofun2srr9afvelvk57Loc6159t5|anofun2srr9afvelvk31Loc6707t2|anofun2srr9afvelvk51Loc1420t2|anofun2srr9afvelvk57Loc1380t6)' evg2anofunx1/evg2anofunz4c.trclass | head                                       
+anofun2srr9afvelvk31Loc6707t2	okay	maina2	anofun2srro1trinc17807g1t1	99/100/.	1457,96%,complete	0,0,aadup:tidbanofun2srro1ridk67Loc64281,pflag:0
+anofun2srr9afvelvk57Loc6159t5	okay	maina2	tranofun2srr4dsoapk27loc24292t1	99/100/.	1457,97%,complete	0,0,aadup:tidbanofun2srro1ridk67Loc64281,pflag:0
+anofun2srr9afvelvk51Loc1420t2	okay	maina2	tranofun2srr4dsoapk55loc6655t2	99/100/.	1443,62%,complete	0,0,aadup:tidbanofun2srro1ridk57Loc28893,pflag:0
+anofun2srr9afvelvk57Loc1380t6	okay	maina2	tranofun2srr4dsoapk55loc6655t1	99/100/.	1443,62%,complete	0,0,aadup:tidbanofun2srro1ridk57Loc28893,pflag:0
+
+asmrna_dupfilter2b.pl:TEST1602 patch
+  .. drop alts, but now have no locus main???
+      #* this helps, reduces main: 10632/17263, +noclass: 3964/4141, but adds those to okay.alt: 90048/60193
+      #* need to fiddle w/ alt drops now
+      ## maybe should not NEXT here, but set ismain{qd},class{qdmain} ??
+
+  egrep '^(anofun2srr9afvelvk57Loc6159t5|anofun2srr9afvelvk31Loc6707t2)' evg2anofunz4c.trclass4
+anofun2srr9afvelvk31Loc6707t2   drop    althi1  anofun2srro1trinc17807g1t1      99/100/.        1457,96%,complete       0,0,aadup:tidbanofun2srro1ridk67Loc64281,pflag:8
+anofun2srr9afvelvk57Loc6159t5   drop    althi1  tranofun2srr4dsoapk27loc24292t1 99/100/.        1457,97%,complete       0,0,aadup:tidbanofun2srro1ridk67Loc64281,pflag:8
+ egrep '^(anofun2srr9afvelvk51Loc1420t2|anofun2srr9afvelvk57Loc1380t6)' evg2anofunz4c.trclass4
+anofun2srr9afvelvk51Loc1420t2   drop    althi1  tranofun2srr4dsoapk55loc6655t2  99/100/.        1443,62%,complete       0,0,aadup:tidbanofun2srro1ridk57Loc28893,pflag:8
+anofun2srr9afvelvk57Loc1380t6   drop    althi1  tranofun2srr4dsoapk55loc6655t1  99/100/.        1443,62%,complete       0,0,aadup:tidbanofun2srro1ridk57Loc28893,pflag:8
+
+grep '^anofun2srr9afvelvk51Loc1420t2' evg2anofunz4c.alntab | cut -f4 | sed 's/$/       okay/;' | ggrep -F -f - evg
+2anofunz4c.trclass4
+tidbanofun2srro1ridk57Loc28893  okay    althi1  tranofun2srr4dsoapk55loc6655t2  99/100/.        1443,62%,complete       0,0,pflag:0
+tranofun2srr4dsoapk25loc36821t1 okay    althi1  anofun2srr9afvelvk51Loc1420t2   99/100/.        1418,62%,complete       0,0,pflag:0
+tranofun2srr4dsoapk31loc38144t1 okay    althi1  anofun2srr9afvelvk51Loc1420t2   99/100/.        1416,63%,complete       0,0,pflag:0
+
+ zegrep '^(anofun2srr9afvelvk57Loc6159t5|anofun2srr9afvelvk31Loc6707t2|anofun2srr9afvelvk51Loc1420t2|anofun2srr9afvelvk57Loc1380t6)' \
+    evg2anofunx1/tmpfiles/evg2anofunz4c.alntab.gz | sort -k2,2nr -k7,7nr -k6,6n | less
+    n=265 for Loc6707t2+
+    n=58 for Loc1420t2+
+
+Loc1420t2 = Loc1380t6.. blast alntab    
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tranofun2srr4dsoapk55loc6655t2  4329    5733    4332    4329    8312
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tranofun2srr4dsoapk55loc6655t1  4329    5733    4332    4329    8312
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk73Loc8492t1   4329    6615    4332    4327    8300
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tidbanofun2srro1ridk27Loc20783  4329    6880    4332    4326    8295
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tidbanofun2srro1ridk57Loc28893  4329    6880    4332    4325    8289
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tidbanofun2srro1ridk27Loc20781  4329    6880    4332    4328    8306
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tidbanofun2srro1ridk27Loc20784  4329    6880    4332    4329    8312
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tidbanofun2srro1ridk37Loc30137  4329    6880    4332    4330    8318
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tidbanofun2srro1ridk57Loc28895  4329    6880    4332    4331    8324
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk51Loc1420t4   4329    6896    4332    4326    8295
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk57Loc1380t1   4329    6896    4332    4324    8283
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk57Loc1380t2   4329    6896    4332    4326    8295
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk57Loc1380t3   4329    6896    4332    4329    8312
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk57Loc1380t4   4329    6896    4332    4321    8266
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk63Loc1436t2   4329    6896    4332    4325    8289
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk63Loc1436t4   4329    6896    4332    4326    8295
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk63Loc1436t5   4329    6896    4332    4324    8283
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tranofun2srr4dsoapk55loc6655t1  4329    5733    4330    4321    8273
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tranofun2srr4dsoapk55loc6655t2  4329    5733    4330    4321    8273
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk73Loc8492t1   4329    6615    4330    4319    8262
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tidbanofun2srro1ridk27Loc20781  4329    6880    4330    4322    8279
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tidbanofun2srro1ridk27Loc20784  4329    6880    4330    4319    8262
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tidbanofun2srro1ridk37Loc30137  4329    6880    4330    4318    8256
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tidbanofun2srro1ridk57Loc28895  4329    6880    4330    4317    8250
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tidbanofun2srro1ridk27Loc20783  4329    6880    4330    4322    8279
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tidbanofun2srro1ridk57Loc28893  4329    6880    4330    4323    8285
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk57Loc1380t6   4329    6896    4330    4318    8256
+    ^^ dup main equivalence here..
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk51Loc1420t2   4329    6896    4330    4318    8256
+    ^^ dup main re-equivalence here..
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk51Loc1420t4   4329    6896    4330    4318    8256
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk57Loc1380t1   4329    6896    4330    4322    8279
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk57Loc1380t2   4329    6896    4330    4324    8291
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk57Loc1380t3   4329    6896    4330    4321    8273
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk57Loc1380t4   4329    6896    4330    4319    8262
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk63Loc1436t2   4329    6896    4330    4317    8250
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk63Loc1436t4   4329    6896    4330    4318    8256
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk63Loc1436t5   4329    6896    4330    4316    8244
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tranofun2srr4dsoapk25loc36821t1 4248    6805    4253    4249    8155
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tranofun2srr4dsoapk25loc36821t1 4248    6805    4253    4250    8160
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tranofun2srr4dsoapk31loc38144t1 4242    6740    4247    4243    8143
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tranofun2srr4dsoapk31loc38144t1 4242    6740    4247    4244    8149
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk31Loc1478t1   3942    6912    3945    3941    7562
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk41Loc1369t1   3942    6990    3945    3936    7533
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk31Loc1478t1   3942    6912    3943    3935    7535
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk41Loc1369t1   3942    6990    3943    3934    7529
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tranofun2srr4dsoapk27loc36801t1 3840    6752    3834    3831    7354
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tranofun2srr4dsoapk27loc36801t1 3840    6752    3834    3831    7354
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tidbanofun2srro1ridk77Loc26471  2829    5049    2832    2827    5416
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tidbanofun2srro1ridk77Loc26471  2829    5049    2830    2822    5395
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tidbanofun2srro1ridk27Loc20782  2343    2703    2343    2339    4482
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tidbanofun2srro1ridk27Loc20785  2343    2703    2343    2336    4465
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tidbanofun2srro1ridk27Loc20782  2343    2703    2343    2339    4482
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tidbanofun2srro1ridk27Loc20785  2343    2703    2343    2340    4488
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk83Loc1440t1   2250    6752    2253    2250    4315
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk83Loc1440t1   2250    6752    2253    2250    4315
+anofun2srr9afvelvk57Loc1380t6   4329    6896    anofun2srr9afvelvk93Loc894t1    582     1252    503     503     968
+anofun2srr9afvelvk51Loc1420t2   4329    6896    anofun2srr9afvelvk93Loc894t1    582     1252    502     499     949
+anofun2srr9afvelvk51Loc1420t2   4329    6896    tidbanofun2srro1fidk01Loc64631  258     258     258     256     -485
+anofun2srr9afvelvk57Loc1380t6   4329    6896    tidbanofun2srro1fidk01Loc64631  258     258     258     256     -485
+----
+
+=cut

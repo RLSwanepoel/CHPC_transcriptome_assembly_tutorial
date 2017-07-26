@@ -1,0 +1,25 @@
+
+    about
+         evigene/evaluate_predictions.pl : from evalpred.sh
+
+    usage
+          scripts/evaluate_predictions.pl -conf=genes/evigene_eval.conf  \
+            genes/ogs12.gff.gz genes/nvit2_mix?asm1*.gff.gz > & eval_ogs1mix67.out &
+          
+          scripts/evaluate_predictions.pl -conf=genes/evigene_eval.conf  \
+            genes/all.*.augmap.gff.gz > & eval_augrnatile7.out &
+          
+     	   # tabulate from prior evals
+           cat eval_ogs1mix67.out eval_augrnatile7.out | scripts/evaluate_predictions.pl -tab
+
+    output
+          Gene Evidence Summary      ----------- Gene Models --------------------------------
+          Evid.   Nevd    Statistic  ogs12   rs009r1 rs016r1 rss3t3  ti.afem ti.amal nvit2x6 
+          EST     34.8Mb  poverbase  0.441   0.753   0.750   0.735   0.755   0.763   0.860   
+          Pro     56.7Mb  poverbase  0.413   0.435   0.431   0.426   0.426   0.426   0.518   
+          RNA     50.5Mb  poverbase  0.316   0.531   0.517   0.512   0.487   0.492   0.532
+		.... more stats ...
+	 GCover  --   Coding bases    27.8    31.3    29      36.3    28.3    28.3    36.4
+	 GCover  --   Exon bases      29.4    86.3    80      89.1    71.8    72.5    85.4
+	 GCover  --   Gene count      18941   24946   23468   24645   21239   21420   30473   
+

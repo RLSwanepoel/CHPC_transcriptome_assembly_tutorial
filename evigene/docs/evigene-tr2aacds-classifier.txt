@@ -1,0 +1,68 @@
+# evigene/docs/evigene-tr2aacds-classifier.txt
+# don gilbert, 2014 
+
+Classification versus Clustering and EvidentialGene tr2aacds mRNA transcript classifier
+
+Classification: separating data into categories, or classes, characterized by a distinct set of 
+features or measures.  An algorithm that implements classification, especially in a concrete 
+implementation, is known as a classifier.
+
+Clustering: Grouping a set of objects based on measures, so that objects in the same group
+are more similar to each other than to those in other groups.
+
+Eg. http://en.wikipedia.org/wiki/Statistical_classification
+    http://en.wikipedia.org/wiki/Cluster_analysis
+-------
+ 
+The EvidentialGene tr2aacds program implements a classifier algorithm to place 
+coding-sequence transcripts into predetermined categories:
+	primary with alternates (= main), 
+	primary, no alternates (= noclass), 
+	alternates, with high and medium alignment to primary (= althi1, althi, altmid)
+	alternates can have fragment qualifier, shorter than primary (= altfrag)
+	alternates can also have protein alignment qualifier (=a2, aa-high-ident), not quite same as CDS alignment.
+	partial, short/incomplete alternate transcripts (= part)
+
+Additionally, an okay (keep) or drop value is assigned using scores of alignment and
+protein quality (size, completeness), and optionally protein homology, to partition 
+useful and not useful transcripts.
+
+In this case the classifier is deterministic, based on absolute transcript qualities, 
+so that same results are obtained with different groupings of input data 
+(e.g using several rounds to classify subsets, then classifying those 
+subset results into a broader group, versus classifying all transcripts from
+all treatments into one broad group at one step).  Other kinds of classifiers
+produce different outcomes based on how you do your steps, are dependent on
+input data groups.  Clustering is also depending on your input data organization.
+
+The drop class contains redundant and uninformative mRNA transcripts versus okay class, 
+including (a) perfect duplicates of okay transcripts, (b) perfect fragments of okay transcripts,
+and (c) other above classes where additional transcript qualities indicate
+an uninformative coding sequence (i.e. protein identity with minor cds difference,
+protein/cds fragment with minor difference from okay transcripts).  
+
+The tr2aacds output table myseq.trclass contains these classings with values, per input transcript.
+EvidentialGene program evgmrna2tsa2.pl produces a simplified classification table of 
+all input transcripts as to above groups from myseq.trclass, as publicset/myseq.mainalt.tab,
+along with other publication sequence files.
+
+Parameters in tr2aacds that assign class have been tested and adjusted with known transcript
+sets to match those, which maximizes true positive classification.  Basic
+parameters for this include sequence length (e.g. minimum of 30 aa, exon local
+alignment identity of >= 98%, to distinguish identical shared exon spans from
+paralogous or population locus variants).
+
+See also 
+http://arthropods.eugenes.org/EvidentialGene/about/EvidentialGene_trassembly_pipe.html
+As described here, tr2aacds uses these steps to efficiently classify large input sets
+of mRNA transcripts.
+  1. perfect redundant removal: exonerate/fastanrdb input.cds > input_nr.cds
+  .. uses added aa.qual info for choosing best cds among identicals.
+  2. perfect fragment removal: cd-hit-est -c 1.0 -l MINCDS ..
+  3. blastn, basic local align hi-ident subsequences for alternate tr., with -perc_identity CDSBLAST_IDENT (98%)
+    to find high-identity exon-sized alignments. 
+  4. classify main/alternate cds, okay & drop subsets, using evigene/rnaseq/asmrna_dupfilter2.pl
+  .. merges alignment table, protein-quality and identity, to score okay-main, ok-alt, and drop sets.
+
+-----
+

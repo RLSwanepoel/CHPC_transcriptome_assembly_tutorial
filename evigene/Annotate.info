@@ -1,0 +1,41 @@
+
+EvidentialGene
+
+Overview
+===============
+0.  prepare genome
+1.  collect gene evidence
+2.  prepare augustus config, evidence hints
+3.  predict with several evidence sets
+>>>>   pipeline scripts for these recipe steps
+4.  annotate predictions with evidence
+    4.1. evidence annotate by base overlaps: protein, est, rnaseq, intron, 
+    4.3. homology, parology annotation from predicted proteins
+
+5.  evaluate predictions, pick best
+    5.1  Choose best model/location from weighted evidence scores
+    5.2  Summarize quality scores
+<<<<
+
+recipe step 4. evidence annotate predictions
+
+ # list commands
+ scripts/annotate_predictions.pl -n -verb -vers an5 -conf genes/evigene_eval.conf genes/all.*.augmap.gff.gz
+
+ # annotate predictions, and per config, run bestgenes on prediction.an5.gff
+ # runtime is roughly 15-20 minutes for this set of 7 predictors + 8 evidences
+ # memory use is 2-4 GB depending on amount of evidence (annotate pipe opens all evidence.gff at same time)
+
+ scripts/annotate_predictions.pl -vers an5 -conf genes/evigene_eval.conf genes/all.*.augmap.gff.gz \
+   > & genes/bestgenes_of7.run0.log 
+
+recipe step 5.1. pick best of predictions
+ # bestgenes only on .an5.gff set
+ scripts/annotate_predictions.pl -noannotate -vers an5 -conf genes/evigene_eval.conf genes/all.*.augmap.an5.gff \
+   > & genes/bestgenes_of7.run1.log 
+
+recipe step 5.2. evaluate predictions
+ # evaluate results
+ scripts/evaluate_predictions.pl -conf=genes/evigene_eval.conf genes/*.an5.gff \
+  >& genes/eval_bestgenes_of7an5.out
+

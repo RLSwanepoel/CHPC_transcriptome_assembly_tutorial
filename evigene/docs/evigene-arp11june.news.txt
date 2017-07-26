@@ -1,0 +1,84 @@
+
+Evidential Gene models for pea aphid are available now at
+ http://arthropods.eugenes.org/EvidentialGene/pea_aphid2/genes/
+
+Evidential gene sets are built/in-progress for 3 other
+arthropods and one plant.  If you have an arthropod genome
+with lots of new expression/other gene evidence that wants
+good gene models, please contact me.   I will miss this
+week's Arthropod Genomics Symposium at Kansas City, to my
+regret. If you run into anyone there with the problem of too
+much gene data that is not being turned into good models,
+have them contact me.
+
+The software for Evidential Gene is progressing, and is
+partly available now, with more work this summer to document
+and simplify its use. It can be used by other genome
+informaticians.
+
+  Evidential genes for 2 arthropods in 2011
+  
+  Daphia magna, 2011mar      Pea aphid, 2011 june
+  Evid.   Nevd     Dmagb8    Evid.   Nevd   Aphid2
+  ------  ------   ------    ------  ------ ------
+  EST     26mb     0.86      EST     36mb   0.79   
+  Pro     27mb     0.79      Pro     27mb   0.76   
+  RNA     32mb     0.70      RNA     55mb   0.49  
+  Intron   89k     0.95      Intron  127k   0.70
+                             
+  Coding span      30 mb     Coding span   42 mb
+  Exon span        58 mb     Exon span     73 mb
+  Genome size     131 mb*    Genome size   541 mb
+  Gene count       31694     Gene count    36586 
+   >95% evidence   66%                      37%
+   >66% evidence   81%                      66%
+  -------------------------------------------------
+  Nevd for EST, Pro, RNA is total span of non-overlapping
+  reads or alignments, but count for valid unique introns from
+  spliced reads.  * This Daphnia magna genome assembly is
+  incomplete, and genes for now are limited to members of
+  the daphnia consortium.  
+
+
+For pea aphid,
+36,500 genes are located in aphid2_evigene8f gene set:
+  14,000 are fully supported by evidence (expression/orthology),
+  24,000 have above 66% evidence support,
+         the remainder have evidence but at lower levels.
+  23,200 have paralogs to pea aphid genes, above 33% identity
+  13,500 have orthologs to other species, above 33% identity
+    5000 alternate transcripts among 2700 genes add to these primary transcripts.
+    4400 are non-coding or poorly coding genes.
+     270 have long genes with valid long introns, span > 100 Kb (acyp2eg0001707t1 nears 1 Mb;
+         honeybee has 240 long genes, fruitfly has 50).
+
+There are also now NCBI Gnomon/RefSeq for pea aphid assembly 2. Using
+my criteria the Evidential gene set is better, if not yet best at
+all loci.
+
+    Gene Evidence Summary for pea_aphid2, 2011 June
+  Evid.   Nevd    Statistic       acypi1  evigene  ncbi2
+  ------  ------  -------------   -----   ------   -----
+  EST     36Mb    BaseOverlap     0.49    0.79     0.69
+  Protein 27Mb    BaseOverlap     0.47    0.76     0.46
+  RNA     55Mb    BaseOverlap     0.27    0.49     0.43    
+  Intron  127000  SplicesHit      0.52    0.70     0.68
+  
+  Ortholog        SameLocus_N     10127   11114   10157
+  Ortholog        SameLocus_Nbest   537    1370     796
+  Ortholog        SameLocus_Bits    387     402     415
+  ------------------------------------------------------
+  Predictors are
+  evigene 2011-June, ncbi2  refseq,  2011-May          
+  acypi1 acyr1-ACYPImRNA, from  2009
+  
+  EST, Protein, RNA are spans of evidence (Nevd) and proportion
+  recovered in 3 prediction sets.  Introns are valid splice
+  locations from EST/RNA reads.
+  
+  Ortholog SameLocus is protein homology of 3 prediction sets 
+  to Uniprot-arthropods from loci with all 3 predictors:
+  SameLocus_N is count of models with Uniprot hit (e<1e-5), 
+  SameLocus_Bits is average bitscore,
+  SameLocus_Nbest is count where predictor has best homology.
+  --------------------------------------------------------------

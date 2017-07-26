@@ -1,0 +1,49 @@
+<html>
+<head>
+	<title>EvidentialGene Voting Machine</title>
+</head>
+<body>
+
+<h1>EvidentialGene Voting Machine</h1>
+
+
+Genome map views include a method for you to vote for the
+best gene models at a locus.
+For example, at this 
+<a href="http://server7.eugenes.org:8091/gbrowse/cgi-bin/gbrowse/aphid2/">
+Pea aphid2 Gbrowse map</a>, choose a best model by clicking on the model.
+
+Choices include <ol>
+<li> Best model, promote to best for a locus
+<li> Alternate transcript, call as alternate were evidence supports
+<li> Drop or demote as poor model
+<li> None, say no models are good enough for this locus
+<li> Skip this locus, saying there is no gene here (or not enough
+     evidence for one).
+</ol>
+<p>
+
+These choices are then placed in <b>A BEST User Choice</b> Track.  They will be visible
+when you Update Image, or turn off Display Setting: [ ] Cache tracks to update each time.
+<p>
+
+
+You can <u>View Gene Details</u>, with annotations of evidence for the model,
+and you can <u>View Changes Table</u>, with a list of all genes voted for.
+<br>
+
+Your expert choice of gene models will improve the automated best model
+selection, which is not as good at this as a human can be.
+<p>
+
+For model choices, see the GBrowse Tracks for Predictions,
+as well as Rnaseq or EST assemblies, and Protein homology gene models.
+<p>
+
+<hr>
+
+<img src="bestgene-voting.png" alt="">
+
+</body>
+</html>
+

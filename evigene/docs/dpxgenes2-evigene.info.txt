@@ -1,0 +1,367 @@
+
+
+You can use these EvidentialGene recipes, scripts for this tar evaluation,
+same as I did in producing and evaluating the Dpulex genes2 and that
+Justin is using for Nasonia genes.  Use the "anaugmap.sh" method to
+annotate genes.gff with tar evidence, then count genes with 
+tar overlapping exons for > 70% of bases.
+
+http://arthropods.eugenes.org/genes2/  
+http://arthropods.eugenes.org/genes2/pea_aphid2/scripts/    
+
+
+Daphnia pulex Genes2(beta3) models:
+http://server7.wfleabase.org/prerelease2/gene-predictions/
+
+daphnia_genes2010_beta3.readme.txt
+  Here the tar_genes evidence is derived from tars 99% above random,
+  in this evidence set the JGI exon locations are excluded.
+
+
+     Daphnia pulex gene model quality, all scaffolds
+Evidence        Nevd    Statistic       jgiv11  gnomon  aug25   best2   best3
+
+                           ======== Exon Sensitivity ========
+est_dpulex      64302   poverbase       0.731   0.732   0.898   0.887   0.892 
+est_dmagna      89949   poverbase       0.783   0.829   0.931   0.913   0.915 
+protein_arp2    181577  poverbase       0.473   0.579   0.800   0.841   0.822 
+
+tar_genes       34850   poverbase       0.000   0.129   0.778   0.651   0.659 
+        (tar_genes = 7.6 Megabases of tile expression not in JGI genes)
+
+                           ======== Exon Specificity ========
+all_evd_specif  145342  poverbase       0.566   0.543   0.375   0.408   0.411 
+
+.................................
+Evidence / Best gene evaluation and annotation scripts
+same as for Nasonia and others but needs configuration for each 
+species evidence
+
+http://arthropods.eugenes.org/genes2/pea_aphid2/scripts/    
+  anaugmap.sh, evalpred.sh, evaltab.pl, overbestgene2.perl
+  
+  anaugmap.sh : annotate gene models with evidence, primarily count bases overlapping
+    for each evidence set (protein, est, rnaseq, tile tar, transposons, ...)
+    The result.gff are used with bestgenes perl to pick best models per locus.
+    
+    Need to create evidence.gff of unique locations (no overlapped features)
+    Also adds protein homology gene score where that is available (from blastp)
+    
+    See below anaugmap_tar.sh for example with tar.gff evidence.
+    
+ 
+  evalpred.sh : evaluate gene models with evidence sets. Similar to anaugmap.sh, but
+     does not annotate genes.gff, instead tabulates evidence sensitivity and
+     specificity by amount of evidence each gene set matches.  Produces raw table
+     for summary with evaltab.pl
+      
+  evaltab.pl  : reads evalpred output, produces above table of sensitivity, specificity
+  
+  
+  overbestgene2.perl : combines and selects best evidence among several annotated genes.gff 
+    also summarizes exon,CDS evidence to gene mRNA
+
+anaugmap_tar.sh
+  : annotate gene exons w/ tar score
+
+# combine exon scores to mRNA  
+original.scoretype=many.ho3:10,pro:4,xde:9,est:2,UTR:2,CDS:2,tar:1,
+add.scoretype= tarmetmet tarmetcon tarsexfem tarsexmal tarchacon tarchates
+
+scripts/overbestgene2.perl -in dpulex_aug26_mixin19an5.anx6.gff \
+-RESCORE -typeover CDS -mrna mRNA -exon 'CDS,exon' \
+-scoretype='many.ho3:10,pro:4,xde:9,est:2,UTR:2,CDS:2,tar:1,tarmetmet:1,tarmetcon:1,tarsexfem:1,tarsexmal:1,tarchates:1,tarchacon:1' \
+-ONEBIN -genescore -summarize > dpulex_aug26_mixin19an5.anx.gff
+
+...........................................................
+select genes w/ tarXXXX evidence >= 70% of exon size 
+various caveats why this isn't best method, i.e. will increase false negatives
+for important cases:  
+
+  -- strong 3' bias in tile expression for long genes; 
+     likely due to preparation converting mRNA to cDNA (3' start) was terminated
+     before 5' finished.
+     
+  -- removes many paralog genes due to untiled regions, even though they often
+     have subset of exons that are unique and tiled.
+     
+  -- tar calculation is spotty, not as precise as using tiles w/ >=min value,
+     tars often cover introns and miss parts of exons that have strong tile expression.
+     
+  -- doesn't handle cases well where group tars cover diff. parts of gene (common)
+  
+  -- long utrs are a problem, many in current gene set need revision to shorter utr,
+      some are not well expressed but contribute to gene size (e.g half).  Could
+      handle this using CDS instead of exon spans for protein genes.
+      
+Alternate way to choose genes w/ 'real' expression:
+  1. by min # bases covered, e.g. 300-500 bases 
+  2. by 2+ exons w/ ~50 % tar coverage  **
+     ^^ try this, for genes w/ enough exons, choose 2-3 exons with highest expression
+        to compare.  Use exons as replicates, e.g. some gene models are bad where
+        one high expressed UTR exon belongs in fact to next gene.
+        With rna-seq at least, the good cases have consistent expression scores
+        across most exons, so high variance across exons indicates problem that
+        replicate error term should control.
+        
+  3. use CDS instead of all exons, but need alternate for ncRNA-like genes.
+
+  
+  
+# see below scripts
+
+n genes= 47712
+n ncRNA genes = 5230
+
+tar 70% = 12078 (1565 ncRNA)
+  # 70% tar misses many reliably expressed genes,
+    e.g. ones w/ >50% tar-covered, lots of strong express, strong DE
+    where visual inspection would call as expressed, DE.
+  
+tar 66% = 13106 (1772 ncRNA)
+tar 50% = 16173 (2366 ncRNA)
+tar 33% = 18522 (2834 ncRNA)
+tar 500bp = 16537 
+tar 300bp = 18736 
+
+tar 70% for 2+ exons = 13529 
+tar 50% for 2+ exons = 15426 
+
+.........................
+
+Tile DE significance tables and plots:
+http://server7.wfleabase.org/prerelease2/gene-predictions/daphnia_genes2010_tilex/
+matab19_1004/
+  ... CDS gene parts ...
+  gene.txmastat104.sex.tab.gz
+  gene.txmastat104.met.tab.gz
+  gene.txmastat104.cha.tab.gz
+  gene.txmastat104.cad.tab.gz
+  ... UTR/ncRNA parts....
+  exonutr.txmastat104.sex.tab.gz
+  .. ditto for intron, taru, unannotated regions ..
+
+
+#............
+#!/bin/tcsh
+# anaugmap_tar.sh  : annotate prediction.gff
+
+# 4.1. evidence annotate by base overlaps: protein, est, rnaseq, intron, tiletar 
+# tar annot using random99 tars:
+#../tiles/tar0810/dpxtar_chaoborus_con.gff.gz  ../tiles/tar0810/dpxtar_metal_metal.gff.gz
+#../tiles/tar0810/dpxtar_chaoborus_tes.gff.gz  ../tiles/tar0810/dpxtar_sex_female.gff.gz
+#../tiles/tar0810/dpxtar_metal_control.gff.gz  ../tiles/tar0810/dpxtar_sex_male.gff.gz
+
+set pcto=10
+set anv=anx
+set tarfiles=(../tiles/tar0810/dpxtar_*.gff.gz)
+set augmapgff=dpulex_aug26_mixin19an5.gff.gz
+set grp=`basename $augmapgff .gff.gz`
+
+set genef=$augmapgff
+set i=0
+
+foreach tarf ($tarfiles)
+  set targ=`basename $tarf .gff.gz | sed 's/dpxtar_\(...\).*_\(...\).*/tar\1\2/;'`
+  @ i= $i + 1
+  set genef2=$grp.$anv$i.gff
+
+  # need -sumbase option for full tar/exon scoring (tars often are several per exon)
+ ../scripts/overlapfilter -nostrand -pass 'exon,tar' -pct $pcto -sumbase -act markbase -mark $targ  \
+  -in $genef -over $tarf > $genef2
+
+ set genef=$genef2
+end
+
+## rescore exon scores to mRNA final annot.gff
+## -scoretype= many original scores + new tarxxxx  : keep all?
+##  trsize==sum exons; tarmaxspa= max span of all groups
+
+set genefinal=$grp.$anv.gff
+
+../scripts/overbestgene2.perl -in $genef \
+-RESCORE -mrna mRNA -exon 'CDS,exon' \
+-scoretype='many.ho3:10,pro:4,xde:9,est:2,UTR:2,CDS:2,tar:1,trsize:1,tarmaxspa:1,tarmetmet:1,tarmetcon:1,tarsexfem:1,tarsexmal:1,tarchates:1,tarchacon:1' \
+-genescore -summarize > $genefinal
+
+#.......................
+# output:
+
+head dpulex_aug26_mixin19an5.xanx.gff
+
+##gff-version 3
+#program: overbestgenes, selection of best gene set by evidence scores
+#version: 2011.02.11
+#author: d. g. gilbert, gilbertd at indiana edu
+#scoretype: many.ho3:10,pro:4,xde:9,est:2,UTR:2,CDS:2,tar:1,trsize:1,tarmaxspa:1,tarmetmet:1,tarmetcon:1,tarsexfem:1,tarsexmal:1,tarchates:1,tarchacon:1
+
+scaffold_1      dpx26mx19       mRNA    198888  206910  0,3006/3614,0,1489,0,3897,406,3897,3262,1494,1302,3025,3199,1467,709    +       .       ID=hxNCBI_GNO_338014;aalen=1298,100%;flags=Evidence,Homolog,Paralog,EST,Expressed;homolog=tribolium_TC002175/1203;jgiov=JGI_V11_231978,JGI_V11_39825;gno=NCBI_GNO_338014;paralog=Omcl463,9;xde2=none/-0.0,0.4,-0.4,-0.9;Name=ARP2_G205/atrial natriuretic peptide receptor ,, guanylate cyclase precursor;human=ANPRB_HUMAN/615/Atrial natriuretic peptide receptor B;cxlen=3897/3897;pro1=3006/3614,aphid_ncbi_hmm115084;scoresum=41557
+scaffold_1      dpx26mx19       exon    198888  199170  0,0,0,0,0,0,0,0,267,0,0,169,267,0,0,    +       .       Parent=hxNCBI_GNO_338014;tarmaxspa=267/283;tarsexfem=169/283;tarsexmal=267/283
+scaffold_1      dpx26mx19       exon    200889  201062  0,0,0,0,0,0,0,0,144,0,0,126,144,0,0,    +       .       Parent=hxNCBI_GNO_338014;tarmaxspa=144/174;tarsexfem=126/174;tarsexmal=144/174
+
+#............
+# count genes w/ large tar support:
+
+grep mRNA dpulex_aug26_mixin19an5.anx.gff | perl -ne'($v)=(split)[5]; @v=split",",$v;\
+@tar=@v[8..14]; $trsize=$v[7]; foreach $tar (@tar) { if($tar/$trsize >= 0.7) { print; last; } }' \
+
+
+#.....................
+# examples of strong metal DE not found in 70%tar subset
+
+## this is using all tar; using only metal-exp/con gives ~50% below 70%tar criteria
+ 250 of 1000 gene-cds with strong Metal DE are not in 70%tar subset
+  63 of  500 gene-utr with strong Metal DE are not in 70%tar subset
+  
+gzcat ../tiles/matab19_1004/gene.txmastat104ccms.tab.gz | ggrep -v -F -f dpxgene2.tar70.ids - | perl -ne'($id,
+$pt,$nt,@v)=split; @mv=@v[10..14]; print if($mv[4] <= 0.01 and $nt>9);' | cut -f1,2,3,14-18 | sort -k5,5nr | head
+
+ID             part    ntiles  met.A   met.M   met.tmean       met.ndf met.pmean
+hxAUG25s37g92t1 cds     25      2.36666 1.74732 3.75275 50      0.00045
+hxAUG26up1s10g8t1       cds     19      3.28375 1.57983 2.91210 35      0.00621
+hxAUG25s25g237t1        cds     78      1.81130 1.54594 4.83524 143     3.39462e-06
+hxAUG26us39g71t1        cds     33      3.50184 1.53549 3.18050 62      0.00229
+hxAUG25s31g70t1 cds     18      2.35327 1.52545 3.38289 32      0.00190
+hxAUG25s39g133t1        cds     20      3.71757 1.48740 4.45326 35      8.26078e-05
+hxAUG25p1s7g51t1        cds     10      1.49891 1.42967 3.41324 17      0.00331
+hxAUG26res26g16t1       cds     48      2.64002 1.41873 3.58613 80      0.00057
+hxAUG25p2s8g83t1        cds     10      1.30089 1.32114 3.13481 17      0.00603
+hxAUG25s76g75t1 cds     16      1.74515 1.30723 3.13047 23      0.00469
+
+ID             part    ntiles  met.A   met.M   met.tmean       met.ndf met.pmean
+hxAUG25s47g115t1        utr     21      1.15976 1.59681 3.60992 35      0.00094
+hxAUG25s76g8t1  utr     10      2.67965 1.51505 3.99929 17      0.00092
+hxAUG25s7447g105t1      utr     30      1.53770 1.35452 3.80271 53      0.00037
+hxAUG25s43g70t1 utr     69      1.52396 1.35255 3.34777 122     0.00108
+hxAUG25s63g96t1 utr     61      1.40822 1.31615 3.36410 107     0.00106
+hxAUG25p1s7g77t1        utr     82      1.53816 1.29558 3.55650 140     0.00051
+hxNCBI_GNO_504114       utr     16      3.59058 1.28718 3.80589 29      0.00067
+hxAUG25p2s8g83t1        utr     30      1.03772 1.22770 2.97075 50      0.00455
+hxAUG25s49g15t1 utr     108     1.66686 1.21536 3.06183 185     0.00252
+hxAUG25s812g94t1        utr     13      1.66972 1.18604 3.24559 23      0.00356
+
+#.....
+Most genes w/ significant DE have few rna-seq reads
+
+gzcat $dpx2/tiles/matab19_1004/gene.txmastat104ccms.tab.gz | cut -f1,3,18 | sed 's/^/tx /' | cat - ./countpe/e
+xoncds.mCon.u2tab | perl -ne'if(/^tx (\w+)\s(\d+)\s(\S+)/) { ($g,$nt,$p)=($1,$2,$3); $s=($p<0.01)?"p01":($p<0.05)?"p05"
+:($p<0.1)?"p1":($p<0.3)?"p3":"ns";  $tp{$g}=$p if($nt>5); next; } ($g,$xi,$n)=m/^(\w+)c(\d+)\s+(\d+)/; if($sn>0 and $lg
+ ne $g) { $p=$tp{$g}; $p=1 unless(defined $p);  $sn=cbin($sn); $sig{$sn}++ if($p<0.05); $cbin{$sn}++; $xx= "$lg\t$sn\n"
+; $sn=0; } $sn+=$n; $lg=$g; sub cbin { my $n=shift; my $f=10 ** int(log10($n)); my $d=int($n/$f) * $f; return($d);  } s
+ub log10{ return(log(shift)/$log10); } BEGIN{$log10=log(10);} END{ foreach $c (sort{$b<=>$a}keys %cbin) { $nsig=$sig{$c
+}; printf "%6d\t%6d\t%6d\n", $c, $cbin{$c}, $nsig; } } BEGIN{ print join("\t",qw(nReads nGenes nDEtile)),"\n"; }' | mor
+e
+
+CDE = coding Diff Expression
+UDE = noncoding DIff Expression
+** Many of high read counts are due to multi-map reads in duplicated regions
+   need to clean those out before this is accurate.
+   
+nReads  nGenes  metCDE metUDE   sexCDE sexUDE cadCDE  chaCDE
+ 60000       2       0       0       1      0     0       0
+ 50000       1       0       0       0      0     0       1
+ 30000       1       0       0       0      0     0       0
+ 20000       7       0       0       2      1     0       0
+ 10000      57       9       3      25      8     1       0
+  9000      16       3       1       8      3     0       0
+  8000      15       1       1       5      2     0       1
+  7000      14       0       0       3      0     0       1
+  6000      25       2       0       8      3     0       0
+  5000      30       3       1       8      4     0       2
+  4000      56       6       5      20     10     2       1
+  3000     113       9       2      39     20     1       3
+  2000     257      30       8     106     48     0       4
+  1000     876      90      52     349    135     6      27
+   900     159      20       9      56     23     0       2
+   800     232      32      11      93     37     0       8
+   700     297      36      12     116     37     2       3
+   600     439      32      30     178     61     1      20
+   500     495      69      23     195     74     4      16
+   400     658      81      35     242     90     5      18
+   300     880     120      39     295    112     2      32
+   200    1223     171      56     443    155    11      57
+   100    1951     321      99     682    251    14      84
+    90     288      50      13     101     40     0      15
+    80     281      45      15     109     39     0       9
+    70     304      41      18      98     38     0      14
+    60     337      61      22     129     47     5      18
+    50     374      46      16     139     58     2      19
+    40     507      83      32     162     71     3      34
+    30     581      91      35     164     65     0      22
+    20     805     105      48     240    109     8      30
+    10    1407     205      65     399    164    14      44
+     9     198      25      17      53     22     3       5
+     8     277      32      20      57     28     3       8
+     7     253      31      18      53     25     0       8
+     6     407      36      20      80     29     1      10
+     5     368      45      27      71     35     4       7
+     4     790      71      38     125     56     3      15
+     3     649      68      40     126     65     3      16
+     2    2166     112      77     226    116     2      23
+     1    1014      85      48     156     69     7      12
+
+
+
+#...............
+
+=item overbestgenes2.perl  gene-join test
+
+The scoring for picking best genes will depend on what evidence you
+have.  Most of the evidence scores used by overbestgene2.perl have no special meaning, 
+you can add or remove score fields at will. The score is generally
+how many bases of an exon or mRNA matches of a given evidence kind (EST, etc.).
+
+The score can be a negative weight instead of positive, as with transposon
+overlaps (terepeat:-3 means down-weight any exon matching a transposon).
+
+But the homology scores are used to test gene-joins.  The best homology score 
+for a joined gene pair will be no higher than for a shorter, true gene model, 
+even if it's protein appears to be twice as long.  So for two models
+with nearly same homology bitscore, but one is 2x longer than other,
+that 2x sized gene is suspect to be a mistaken join.
+
+Without this kind of test, the longest gene model at any locus wins, as it
+has more bases and scores higher with all the other evidence.
+So without good gene-join tests, a gene model composed of 3 real genes 
+beats out the 3 separate real gene models.
+
+In newer version of this overbestgene2.perl, I changed these
+homology field names.  Now this is called ho3 by default, added to
+each mRNA as ";ho3=562/vitis:XP_002272531.1", after running blastp and 
+collecting best bitscore per model protein.
+
+THis is how I make the ho3= score field:
+
+# 4.3.1 blastp to other species (query.aa)
+  blastall -pblastp -i $query.aa -d $runset.aa -e1e-5 -m9 -o $runset-$query.blastp
+# 4.3.2 blastp to self
+  blasatall -pblastp -i $runset.aa -d $runset.aa -e1e-5 -m9  -o $runset-self.blastp
+
+# turn blastp into best genescore tables
+  foreach blp ($runset-*.blastp.gz)
+    set runpair=`basename $blp .blastp.gz`
+    gzcat $blp | grep -v '^#' | perl -ne\
+    '($q,$t,$b)=(split)[0,1,-1]; print "$t\t$b\t$q\n" unless($q eq $t);' |\
+    sort -k1,1 -k2,2nr | perl -ne'($g,$b,$q)=split; print unless($did{$g}++);' 
+     > $runpair.genescore
+  end
+
+# pick best single score/gene model
+  cat $runset-*.genescore | sort -k1,1 -k2,2nr |\
+  perl -ne'($d,$v)=split; print "ho3\t",$_ unless($ld eq $d); $ld=$d;' > $runset.bestgenescore
+
+# add to prediction mRNA annotation for bestgene evaluation
+  cat $runset.bestgenescore $runset.an3.gff | perl -ne \
+'if(/^ho3\t(\S+)\t(\S+)\t(\S+)$/){ $gb{$1}="$2/$3" unless($gb{$1});}\
+else { if(/\tmRNA/) { ($g)=m/ID=(\w+)/; $b=$gb{$g}; s/$/;ho3=$b/ if $b; } print; }' \
+> $runset.an4.gff
+
+#....
+
+  ho3 = best homology bitscore.
+    In the annotated gene files, I set the attribute ho3=bitscore/homologID
+     where bitscore is best homology gene bitscore, or if no homology,
+     best paralog bitscore. 
+
+    
+=cut

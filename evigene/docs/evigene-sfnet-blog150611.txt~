@@ -1,0 +1,457 @@
+
+<a href="https://sourceforge.net/p/evidentialgene/blog/">
+sourceforge.net/p/evidentialgene/blog/
+</a>
+
+      Transcript isoform/alternate classifier in Evigene
+      <a href=https://sourceforge.net/p/evidentialgene/blog/2015/06/transcript-isoformalternate-classifier-in-evigene/>
+      June 10, 2015 2:35 PM</a>
+
+Q:
+
+    My first question is: what does Evigene do if multiple ORFs are very
+    similar in length and sequence, but differ in
+    - few non-synonymous nucleotides, i.e. amino acids
+    - few synonymous nucleotides, i.e. different DNA but translating to
+    same protein
+    .. [Evigene docs not clear on ] what happens when they are slightly
+    different (and of course still highly overlapping). This is of
+    course also relevant for retention of paralogs within our set.
+
+A:
+Thanks for your use of Evigene and comments. I'll give you a quick
+answer, may not be fully satisfactory. The mRNA assembly pipeline part
+you are using does a /simple/ measure by sequence similarity to classify
+transcripts as locus best-representative, valid alternate, or
+redundant/non-coding/uninformative (dropset).
+
+Coding sequences of mRNA are the primary data, so that DNA different
+sequences are classified as differing. It uses BLASTn (basic local
+alignment) for this classing primarily, after removing truely redundant
+coding sequences more quickly with fastanrdb, cd-hit-est (perfect).
+
+I've tested and adjusted Evigene with blast alignments of several
+species, to try to make that judgement of shared-coding-exons as the
+primary classifier, in the biological sense that mRNA with shared coding
+exons are of the same locus (same definition as with genome genes). This
+is however an approximation from blast scores, so that refinements of
+heterozygosity (SNP changes), high-identity paralogs, and such will be
+mixed into classes of alternate or redundant transcripts.
+
+I've experimented w/ other tools to do this, e.g. lastz (update of
+blastz), which have promise, but havent yet found another tool or
+written one to make more precise decisions. So there are exceptions that
+you will need to discover by digging thru your results, using some genes
+known by orthology.
+
+As for Trinity's values, I use it and I've test compared it with the
+other well used RNA assemblers (Velvet/Oases, SoapTrans, Abyss, even
+genome-mapped Cufflinks). e.g. bottom Figs 4-9 at
+http://arthropods.eugenes.org/EvidentialGene/about/EvidentialGene_quality.html
+
+Trinity does not perform as well, over all, as other full de-novo,
+Debruijn graph assemblers of RNA-seq. There are review papers by others
+who reach same conclusions. The figs above indicate what I usually see
+w/ Trinity vs others: less complete proteins (ie shorter, weaker
+orthology), sometimes the transcripts are on average longer, but with
+more coding errors.
+
+I'm not suggesting you change your methods for gene assembly, etc., but
+you may want to review literature on this, and/or try some of the
+multi-kmer, full paired-end read assemblers. Soap runs quickly,
+sometimes fails, but full multi-kmer outputs generally exceeds Trinity,
+Velvet/Oases always gives most complete gene set for single tool, but
+chews up memory. Evigene finds the best mRNA from all these, and
+discards the 2nd best. You do need to use all the transcripts as inputs
+to Evigene, produced by multi-kmer assemblers, as no single assembly set
+has all loci fully assembled.
+
+Q:
+
+    My second question regards splice variants. Trinity is supposed to
+    produce different isoforms for the same 'gene', but I'm not so sure
+    if I trust that. If there are genuine isoforms present in our
+    Trinity assembly, does Evigene only retain the longest one? For
+    example in the following case:
+    - isoform 1: A-B-C-D
+    - isoform 2: A-B-D
+    - isoform 3: A-C-D
+    I suppose if isoform 1 is present, that will be the only one
+    retained. But if 1 is absent, and 2 and 3 are present, will it
+    retain both?
+
+A: On your question of isoform/alternate classing by Evigene:
+The above assemblers all classify alternate transcripts, but some of
+those classifications are wrong, i.e. are paralogs instead, or are
+artifacts (gene joins). I dont' claim Evigene is always giving a correct
+locus/alt class, but it is producing them with biologically
+understandable criteria:
+*alternates of a locus share coding sequences of exon size or better,
+with high identity (99% or 98%) alignment.*
+
+The others use read-sharing, which gives somewhat different answers, and
+is generally more subject to artifacts of expression overlap, reads from
+tandem duplicate (and tandem unrelated) genes, repetitive reads, etc. So
+in my view, and in observed results, read-sharing is less precise than
+coding-exon sharing as a classification of locus/alternate.
+
+Evigene's tr2aacds.pl should place isoform1 in okayset/okay.seqs, and
+isoforms2,3 into okayset/okalt.seqs, assuming from your pictogram the
+exons B,C are not highly redundant. For all good coding sequence mRNA,
+the alternates are retained as okay unless highly redundant (e.g 98% or
+better identity over all of CDS).
+
+For a heterozygous transcript set, some "alternates" will be hetero
+allelic forms of one isoform, etc.
+
+Paralogs are discriminated when they have sufficient divergence, e.g.
+changes in all coding exons A,B,C,D. If they remain identical in 1 or
+more coding exons, they can be classed as alternates of one locus. We in
+fact see this in some species, Daphnia among them with many hi-ident
+tandem paralogs as located on genome assembly. For these problem cases,
+only non-genic sequences are divergent, ie. transcripts cant be reliably
+discriminated by sequence divergence.
+
+
+      Merged and unmerged transcript assemblies
+      <a href=https://sourceforge.net/p/evidentialgene/blog/2015/06/merged-and-unmerged-transcript-assemblies/>
+      June 2, 2015 1:16 PM</a>
+
+Q:
+
+    In order to include other assemblies, should i include the single
+    assemblies for each k-value or can i take the already merged by the
+    assembler-assemblies (many multi-kmer assemblers (oases, soap) allow
+    automatic merging of different k-assemblies)?
+
+A:
+Regarding use of merged assemblies, it depends on how they were merged.
+Evigene is designed to handle 10s of millions of transcript assemblies
+efficiently from same data set, classifiying them as best and alternate
+locus representatives, redundant duplicates/partials, and other things
+(noncoding, artifactual joins, ..). I always use the full set of
+original assemblies from multi-kmer runs.
+
+Oases has a merge option that I do not recommend, as it has a rather
+large error rate in producing joined genes and other artifacts, that is
+it doesn't use gene metrics to merge, just overlapping sequence. There
+are similar problems w/ other transcript merging programs I've tried
+like CAP, mira; they do not use the RNA read pair information that
+original DeBruijn graph assembly does. These mergers tend also to
+include indels, stop codons, etc. that damage complete genes. So they
+make more mistakes in joining parts of different genes that don't belong
+together. I find by doing enough alternate de-novo assemblies that I get
+a greater portion of complete coding genes than using those other
+techniques to merge.
+
+As Evigene handles multimillions of assemblies well, removing
+redundancies stepwise as efficiently as possible, you can try both ways
+together (unmerged large set + otherwise merged set), and /should/ get
+the best result, but there is a small degree of garbage-in/garbage-out
+that is hard to get rid of.
+
+  * Don
+
+
+      Test Drive EvidentialGene
+      <a href=https://sourceforge.net/p/evidentialgene/blog/2015/06/test-drive-evidentialgene/>
+      June 1, 2015 10:17 PM</a>
+
+Q:
+
+    .. it didn't work on my data set
+
+A:
+Please run the Evigene TEST DRIVE data set of plant genes, from
+http://arthropods.eugenes.org/EvidentialGene/about/EvidentialGene_trassembly_pipe.html
+TEST DRIVE
+..
+You should be able to get same result from same Arabidopsis transcripts
+input data file,
+arath_TAIR10_20101214up.cdna
+and where problems appear, please consult a local computer user expert
+familiar with your cluster computer to resolve. After you get that test
+set working ok, running on your data set should be simpler.
+
+
+      Combining transcript sources in EvidentialGene
+      <a href=https://sourceforge.net/p/evidentialgene/blog/2015/06/combining-transcript-sources-in-evidentialgene/>
+      June 1, 2015 10:14 PM</a>
+
+Q:
+
+    I have five lanes of illumina sequencing, all assembled with
+    velvet/oases with all possible combinations of k-mer length and
+    coverage cutoffs, one lane Roche 454 and about 30k Sanger reads from
+    an older EST project. I however want to include the 454 data and the
+    Sanger data, and since I'm not entirely sure how the pipeline
+    handles this, I would like to ask you the following question: does
+    the algorithm in any way "weight" the importance of input
+    transcripts relative to the total input size? Do you think it is a
+    good strategy to just concatenate the illumina assemblies with the
+    Sanger reads and the 454 and feed them directly into the pipeline?
+    Would I pre-assemble the 454, or just feed the raw reads?
+
+A:
+The EvidentialGene pipeline for mRNA transcripts is agnostic about the
+sources of your transcripts, that is it will work using same
+coding-sequence metrics to determine best locus representiatives, and
+valid alternates, for inputs from short read, longer read, very long
+read RNA-seq assemblies, or other sources like genome-gene predictions
+(though that isn't recommended as those have predictor guesses that
+won't be measurable).
+
+I have and you can mix inputs from assembly of Illumina, Roche 454,
+other, that are mRNA transcripts (or include mRNA), and it will
+determine "best" coding sequence representatives, regardless of quantity
+of inputs .. that is what it was designed to handle. The 454 data tends
+to have much higher read error rate that causes artifactual indels,
+inner stops, and so I find assemblies of Illumina will tend to give best
+mRNA transcripts, but some of best will be from 454 in a collection of
+both, depending on qualities of the transcript assemblies.
+
+Evigene does no assembly of RNA reads; you will want to assemble your
+input reads as best you can, using multiple assemblers and options as
+feasible .. the more options/methods, the better results you will find,
+as the difference between broken, partial coding genes and full,
+complete coding genes is rather easy to determine.
+
+There are complications possible, such as heterozygosity from mixtures
+of clone/population RNA-seq, and many possible assembly options, e.g if
+you add SOAPDenovoTrans to your Velvet/Oases assemblies of illumina, you
+will likely increase number of complete coding genes recovered, even
+though VelO gives me best single assembler results, the general approach
+I've worked out is same as has been found best for genome-gene
+predictions over years: no single method or parameter set of gene
+modelling gets all loci right, multiple methods are the key, and a way
+to classify the good from bad models.
+
+
+      EvidentialGene transcript assembly/annotation pipeline notes
+      <a href=https://sourceforge.net/p/evidentialgene/blog/2015/06/evidentialgene-transcript-assemblyannotation-pipeline-notes/>
+      June 1, 2015 10:02 PM</a>
+
+Q:
+
+    ..which pipeline you have used for de novo transcript annotation?
+
+A:
+EvidentialGene, which has parts for complete gene set (genome/transcriptome)
+annotation, though "easy to use" still needs some work on my part. You will
+find at
+http://arthropods.eugenes.org/EvidentialGene/about/EvidentialGene_trassembly_pipe.html
+
+Other EvidentialGene scripts for trassembly
+
+  *
+
+    evigene/scripts/prot/namegenes.pl : Use /after/ tr2aacds on okayset,
+    add gene function names from UniProt-Ref and CDD blastp.
+
+      o deltablast -rpsdb $cddb -show_domain_hits -outfmt 7 -db $refdb
+        -query $name.allok.aa -out $name.deblastp
+      o namegenes.pl -cddnames=info.cdd.txt -refnames $refdb.names
+        -blast $name.deblastp
+  *
+
+    evigene/scripts/rnaseq/asmrna_trimvec.pl : UniVec vector screening
+    and NNN-end trimming, per NCBI or INSDC desires
+
+  * evigene/scripts/evgmrna2tsa.pl : make public mRNA gene set, with
+    pubIDs, main/alternates, names and annotation, and Genbank TSA
+    format for public submission.
+
+These are basic parts of transcriptome annotation for public gene set
+releases,
+though parts not listed here include use of BLASTP for reference
+proteins x trasm prots,
+and use of OrthoMCL gene family clustering to describe gene groups of a
+transcript assembly.
+I dont' yet have a fully working example or docs for using all these
+parts; it is not my list
+todo when funding/time permits. The examples for Honey bee and Tribolium
+beetle are close
+to worked examples for public, annotated gene sets
+http://arthropods.eugenes.org/EvidentialGene/arthropods/honeybee/evg3hbee/
+<http://arthropods.eugenes.org/EvidentialGene/arthropods/honeybee/evg3hbee>
+http://arthropods.eugenes.org/EvidentialGene/arthropods/triboliumbeetle/evg2tribol/
+<http://arthropods.eugenes.org/EvidentialGene/arthropods/triboliumbeetle/evg2tribol>
+
+This tribolium gene set is a good example of EvidentialGene versus
+genome-gene sets, as there are two other recent (2014/15) tribolium
+genome gene sets using same RNA-seq data as this no-genome mRNA
+assembly. The orthology-complete assessment says the Evigene assembly is
+a more complete beetle gene set. Tribolium is a case of near-automated
+use of Evigene, it took me about 3 weeks to build: 1 week draft assembly
+to assess the public SRA RNA-seq data set, 2nd week to run a fuller
+assembly (more kmers, more assembliers), 3rd week to annotate with
+protein blast/orthology, clean up for public use. All of this can be
+fully automated to process any number of species, given funding, etc.
+which I currently lack.
+
+
+      Bi-directional gene assembly
+      <a href=https://sourceforge.net/p/evidentialgene/blog/2015/06/bi-directional-gene-assembly/>
+      June 1, 2015 9:52 PM</a>
+
+Q:
+
+    If a gene is bidirectionally express, would it collapse the two
+    transcripts into one as being redundant or would both remain?
+
+A:
+Evigene mRNA pipeline works on coding sequences mainly. The Daphnia
+magna transcriptome
+assembly I completed last year has bi-dir expressed genes, some clearly
+so, some fuzzily so.
+Mapping to a partial genome assembly is part of what I do for complex
+genes to aid
+classification, beyond the scope of current Evigene-mRNA (ie. into
+Evigene-mRNA+genome).
+
+Bi-dir transcribed mRNA should have different coding sequences, but the
+automated
+ORF caller I have as part of it picks only longest ORF, forward or
+reverse strand, so
+adjustments need to be made to handle both strands on same transcript.
+My understanding
+of this complex case, both the biology and the computational assembly of
+mRNA-seq, is
+weak, but what I recall from the Daphnia cases is that there were
+distinct mRNA assemblies,
+and coding sequences, produced by the RNA-seq assembliers for forward
+and reversed transcription
+at same genome "locus". That result wont be a problem as Evigene
+pipeline sees those as distinct
+transcript loci.
+
+If you have a harder case of same transcript assembly with 2 coding
+sequences,
+forward + reverse, then special handling is needed. I have in fact found
+cases where
+shorter, reverse strand ORF is the orthology-accurate protein, breaking
+the automated longest-ORF
+assumption. The way Evigene can deal with those is to have inputs of
+orthology scores
+and pre-constructed protein translations of the shorter, reverse strand
+proteins.
+
+The way I approach high quality gene construction is thru several rounds
+of automated
+assembly, locus classification, orthology measurement, then refinement
+to handle complex cases.
+This is more work, but that is the kind of complexity that is needed to
+get highly accurate gene sets.
+
+As far as I know, none of the genome-gene predictors handle or detect
+bi-directional gene loci, but
+transcripome assembly does such, which may be one reason there is
+apparent paucity of such reported
+in species gene sets.
+
+This doesn't give you a recipe, I would need time to dig through Daphnia
+and other gene sets
+to recover details. Your first step I guess if you have identified
+bi-dir loci is to see
+if your transcript assemblies of these are distinct. Another test is to
+look for high-identity,
+reverse-alignment of coding sequences. One of Evigene's intermediate
+outputs is that all x all
+blastn of coding sequences, that would include such cases.
+
+
+      EvidentialGene gene sets and citation
+      <a href=https://sourceforge.net/p/evidentialgene/blog/2015/06/evidentialgene-gene-sets-and-citation/>
+      June 1, 2015 9:38 PM</a>
+
+Please cite this for EvidentialGene mRNA gene assemblies and methods:
+Gilbert, Donald (2013) Gene-omes built from mRNA seq not genome DNA.
+7th annual arthropod genomics symposium. Notre Dame.
+http://arthropods.eugenes.org/EvidentialGene/about/EvigeneRNA2013poster.pdf
+and http://globalhealth.nd.edu/7th-annual-arthropod-genomics-symposium/
+<http://globalhealth.nd.edu/7th-annual-arthropod-genomics-symposium>
+
+The various gene sets publicly available in EvidentialGene/ web
+directory are public
+gene information that you can use, cite, analyze, etc. Please let me
+know how they are useful, so I can assess value to the science community
+for doing more. My analyses say they are all of high quality, see
+http://arthropods.eugenes.org/EvidentialGene/arthropods/Arthropod_Orthology_Completeness/
+<http://arthropods.eugenes.org/EvidentialGene/arthropods/Arthropod_Orthology_Completeness>
+
+Some of these are in other more formal journal publications, others will
+be later on
+as time permits.
+
+
+      Combining assemblies to one transcriptome, 2015 june
+      <a href=https://sourceforge.net/p/evidentialgene/blog/2015/06/combining-assemblies-to-one-transcriptome-2015/>
+      June 1, 2015 9:30 PM</a>
+
+Q:
+
+    I currently have two datasets (stranded single end and stranded
+    paired end reads) from two experiments of the same species and want
+    to combine them into a single transcriptome to do DGE and
+    phylogenies. So far i've done de novo assemblies for both of them
+    with Trinity. Merging them with tr2aacds.pl gives me already nice
+    stats (see below).
+    Would you still include Oases assemblies? As i would have to again
+    split the assembly to pe and se assemblies, i dont know if this is
+    the best approach.
+
+A:
+Trinity has in my tests always been 3rd or 4th ranked in returning
+complete genes. That is because it doesn't use paired-end reads fully
+(ie. like regular denovo assembly that allows gaps between pair parts),
+and it doesn't use multiple kmers, which is essential for RNA-seq's
+range of expression (high expressed genes assemble best with large
+kmers, ie more complete reads). In general it returns more partial
+genes, and sometimes more joined genes.
+
+You decide of course, whether more assemblies are worth your effort. The
+best way to assess is with protein blast orthology measures to related
+species. Those metrics will tell you how many complete vs partial vs
+missed genes you have among known orthologs (won't help w/ the novel
+genes, but as evigene is orthology-blind, the novel genes should be as
+complete as orthogenes).
+The quick way to assess completeness among assembly sets is what you get
+from Evigene tr2aacds output summary table, the protein sizes summary.
+Ie. compare this result from your output:
+okay.top n=1000; average=1273; median=1127; min,max=950,4322;
+with results from other assembly sets. Protein size, esp. for the top
+1000 subset, is a good indicator of orthology completeness, as there is
+a positive correlation and a maximum to protein sizes. This is what I
+got for a banana gene set:
+okay.top n=1000; average=1212; median=1091; min,max=894,5104;
+Note somewhat larger max plant gene ("BIG" is the largest plant gene,
+named in arabidopsis).
+
+I would recommend SOAP-denovo-Trans as a midway step if you want a
+quick, not quite best 2nd assembly to check. You will undoubtedly find
+it adds improved, more complete genes to your combined set. SOAP always
+runs fairly quickly in lower memory systems, but sometimes fails and
+isn't quite as good as Velvet/Oases in returning complete genes. But
+generally does better than Trinity, when used w/ multi-kmer assemblies,
+as it is a full de-novo assembler. For a complete gene set, I recommend
+using at least 3 de-novo assemblers, from among Velvet/Oases, Soap,
+Trinity, Abyss, maybe others. Use the range of kmers to cover your
+read-size for those that allow, i.e. for 100bp reads, use kmers up to 90
+or so (which runs fast, gets few genes, but some of those are best
+assemblies). I generally run at least 10 kmer sets from 25 to 95, then
+pick among those with protein quality stats to refine with more kmer
+steps when project is worth effort.
+
+Think about genome assembly methods, and why Velvet, SOAP, Abyss and
+others are used, but not Trinity. mRNA assembly is much the same, but
+for the expression variation: full DeBruijn methods for paired short
+read assembly work well on it as there are no transposons or introns to
+muck up the gene assemblies.
+
+It also depends on how much RNA-seq you have, and what range of tissues,
+treatments, etc. on whether you can recover a complete species gene set.
+My rule now is 100 million read pairs (all paired end), Illumina, 75bp
+at least (read size may be less critical than other things like insert
+size). Single reads can be added in to fill in gaps, but are not as
+useful as paired ends for gene assembly.
+

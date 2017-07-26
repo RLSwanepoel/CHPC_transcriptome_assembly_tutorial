@@ -1,0 +1,85 @@
+
+Date: Thurs, 11 Jun 2015 
+From: Don Gilbert <gilbertd>
+Subject: EvidentialGene goals 2015, part 2
+
+Evigene-N
+---------
+Non-coding RNA genes are now discarded by Evigene-M (the mRNA classifier),
+but of course they are genes important to organisms, and should be 
+classifiable from RNA-seq assemblies or transcripts that include substantial non-coding
+expressed genes.
+
+Evigene-N can be modified from parts of Evigene-M pipeline, for non-coding RNA genes,
+with small amounts of work to leverage existing code:
+a. prerequisite Evigene-M is run to classify good mRNA genes, 
+b. subtract mRNA transcript okay set from input transcript pool.
+c. tr2ncrna.pl, ie. tr2aacds.pl modified, for full transcript alignment classification
+   instead of coding sequence classification.
+
+Outputs would initially be
+   okncrnaset/ with primary (longest) and alternates of same locus, determined
+again by exon-size or better high idenity alignments, and redundant discards
+including perfect fragments of longer ncRNA transcripts.
+
+Without additional methods or databases of known ncRNA, the result set will include
+some rather large set of partial transcript artifacts that differ, and may or may not be
+biological loci.  Still it is a step toward subdividing the "dropset" discarded
+transcripts into possible biological ncRNA genes and probably redundant artifacts
+of assembly process.
+-----
+
+Evigene-G
+---------
+The genome gene construction portion of Evigene is "done", to sufficient detail that
+it works reliable, producing accurate gene sets, in my author's hands. But it has 
+poor/limited documentation.  It isn't wildly different from other genome gene combining tools, 
+but I think it has enough value to warrant that final step of making it consumer friendly 
+(or at least usable:)
+
+Evigene-GM 
+----------
+Combining mRNA assembled and genome-gene modeled genes remains a valuable goal, 
+one that many genome projects out there would use if/when they realize that 
+mRNA assembled genes really are often improvements on genome modelled genes.
+
+It is a goal that has however more problems than may be obvious at first thought.
+The basic problem is resolving discrepancies between these two organizing principles:
+  G. genes are locations of exons on a genome
+  M. genes are expressed, assembled RNA (m or nc)
+These are *supposed* to give the same biological answer, but for small expression/location
+effects.  But discrepancies when you have both are rather more common than expected (ie. 50%)
+for current genome assemblies of non-model organisms, and current RNA-seq expression experiments, 
+for reasons that include genome assembly mistakes, gene assembly mistakes, 
+mapping genome<>gene mistakes, heterozygosity and population variation in the above sequences, 
+repeats and duplicates in the above, seqencing errors, ...
+
+Having both M + G gene sets, independently produced, allows for stronger validation and
+better accuracy, in theory, but makes for more work resolving these discrepancies.
+---
+
+Evigene-M-Genome-Assembly-Assist
+--------------------------------
+An offshoot of above, resolving G and M discrepancies, is that some/many discrepancies
+are in genome assembly, esp. with current short read technology.  Since Evigene-M genes
+assembled from mRNA can be independently validated thru other species orthology, those
+valid genes at least offer an independent assessments for genome assemblies at those
+gene regions, often regions of high value as these are well-known-orthologs.
+
+Besides the simple validations of "does this gene align properly and fully to genome assembly?",
+these gene transcripts can be used for genome assembly, as scaffolding inputs to join
+gene spanning scaffolds, as gap filling sequences, and with proper helper software, as
+pseudo-genomic dna paired-end reads to more fully and accurately assemble genome regions
+where these genes are supposed to be accurately located.
+
+
+Evigene-Submit
+--------------
+Public database submission methods are developed and working now (evigene/scripts/evgmrna2tsa.pl), 
+so that others can use this following transcript assemblies, including fully annotated and
+error checked/resolved transcript assemblies for submission to NCBI TSA,
+genome assemblies annotated by transcript gene assemblies (NCBI Genbank/WGS). 
+There remain project-specific problems and such to improved automated use of these.
+----
+
+
